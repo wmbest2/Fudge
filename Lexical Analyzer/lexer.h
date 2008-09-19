@@ -37,6 +37,7 @@ private:
 	void eatWhiteSpace();
 	void eatComments();
 	void eatPreProc();
+	void postProcess();
 
 	bool checkTripleOp(char first);
 	bool checkDoubleOp(char first);

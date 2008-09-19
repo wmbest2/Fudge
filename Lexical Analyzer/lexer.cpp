@@ -127,11 +127,11 @@ void lexer::tokenize()
 
 			tokens.push_back(buildKeyOrID(current)); // preproc directive
 			//std::cout << "UP: "<<tokens[tokens.size() -1].text() << std::endl;
-			eatWhiteSpace();
+			//eatWhiteSpace();
 			//std::cout << input->peek() << std::endl;
 
 			eatPreProc();
-			std::cout << "PP: "<< tokens[tokens.size() - 1].text();
+			//std::cout << "PP: "<< tokens[tokens.size() - 1].text();
 		}
 		else if(current == '"')
 		{
@@ -217,10 +217,40 @@ void lexer::eatComments()
 
 	}
 
+	postProcess();
 	// YUM
 }
 
-void  lexer::eatPreProc()
+void lexer::postProcess()
+{
+
+	std::vector<token>::iterator itr;
+	std::vector<token>::iterator itr_next;
+	bool was_begin = false;
+	itr_next = tokens.begin();
+	for(itr = tokens.begin(); tokens.size() - 1; ++itr)
+	{
+		if(was_begin)
+		{
+			--itr;
+		}
+		++itr_next;
+		if(itr->type() == token::stringliteral &&
+			itr_next->type() == token::stringliteral)
+		{
+			itr->text(itr->text() + itr_next->text());
+			if(itr != tokens.begin())
+			{
+				--itr;
+			}
+			else
+				was_begin = true;
+			--itr_next;
+		}
+	}
+}
+
+void lexer::eatPreProc()
 {
 	//Eat the rest
 	char tmp;

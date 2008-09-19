@@ -29,6 +29,7 @@ parser::~parser() {
 struct parser::error
 {
 	int token_loc;
+	token tok;
 	std::string desc;
 };
 
@@ -40,6 +41,11 @@ struct parser::state_info
 	token getCurrent()
 	{
 		return lex->get_token(current_token);
+	}
+
+	token getAt(int i)
+	{
+		return lex->get_token(i);
 	}
 
 	std::string text()
@@ -57,30 +63,56 @@ struct parser::state_info
 		return (t == getCurrent().text());
 	}
 
+	bool matchText(const std::string& t, int advancement)
+	{
+		return (t == getAt(current_token + advancement).text());
+	}
+
 	bool matchType(token::TOKENTYPE t)
 	{
 		return (t == getCurrent().type());
 	}
 
-	void si->matchIncr(token::TOKENTYPE tok)
+	bool matchType(token::TOKENTYPE t, int advancement)
 	{
+		return (t == getAt(current_token + advancement).type());
+	}
+
+	void matchIncr(token::TOKENTYPE tok)
+	{
+
 		if(matchType(tok))
 		{
-			std::cout << si->text() << std::endl;
+			std::cout << text() << std::endl;
 			++current_token;
 		}
 		else
+		{
+			e.token_loc = current_token;
+			token tmp = getCurrent();
+			e.tok = tmp;
+			e.desc ="There was an error matching token to type ";
+
 			throw e;
+		}
+
 	}
 
-	void si->matchIncr(token::TOKENTYPE tok, const std::string& txt)
+	void matchIncr(token::TOKENTYPE tok, const std::string& txt)
 	{
 		if(matchType(tok) && matchText(txt))
 		{
 			++current_token;
 		}
 		else
+		{
+			e.token_loc = current_token;
+			token tmp = getCurrent();
+			e.tok = tmp;
+			e.desc ="There was an error matching token to type ";
+
 			throw e;
+		}
 	}
 
 
@@ -95,7 +127,15 @@ void parser::parse()
 	si = new state_info();
 	si->lex = file_lexer;
 	si->current_token = 0;
-	inclfile();
+
+	try
+	{
+		inclfile();
+	}
+	catch(parser::error& e)
+	{
+		std::cout << e.desc << std:: endl;
+	}
 
 }
 
@@ -105,53 +145,56 @@ void parser::parse()
  */
 namespace {
 
+	void q(parser::state_info* si)
+	{
 
+	}
 
+	void qlist(parser::state_info* si)
+	{
+		if(si->matchType(token::coloncolon))
+			si->matchIncr(token::coloncolon);
+		else if(si->matchType(token::identifier) && si ->matchType(token::coloncolon, 1))
+		{
+			qlist();
+		}
+	}
 
-
+	void ident(parser::state_info* si)
+	{
+		qlist(si);
+		si->matchIncr(token::identifier);
+	}
 
 	void ifdefdir(parser::state_info* si)
 	{
-		if(si->matchText("ifdef") || si->matchText("ifndef"))
+		if(si->matchText("ifdef"))
 		{
-			si->matchIncr(token::keyword);
-			si->matchIncr(token::identifier);
+			si->matchIncr(token::ifdef);
+
+		}
+		else if(si->matchText("ifndef"))
+		{
+			si->matchIncr(token::ifndef);
 		}
 		else if(si->matchText("endif"))
 		{
-			si->matchIncr(token::keyword);
+			si->matchIncr(token::endif);
 		}
+		si->matchIncr(token::ppjunk);
 
 	}
 	void defdir(parser::state_info* si)
 	{
-		 if (si->matchText("define"))
-		 {
-			si->matchIncr(token::keyword);
-			si->matchIncr(token::identifier);
-			if(si->matchType(token::eq))
-			{
-				si->matchIncr(token::eq);
-				// must be char, string, or num literal
-				if(si->matchType(token::charliteral) || si->matchType(token::stringliteral) || si->matchType(token::number))
-					si->matchIncr(si->type());
-			}
-		 }
+		si->matchIncr(token::define);
+		si->matchIncr(token::ppjunk);
+
 	}
 
 	void incldir(parser::state_info* si)
 	{
-		si->matchIncr(token::keyword);
-		if(si->matchType(token::great))
-		{
-			si->matchIncr(token::great);
-			si->matchIncr(token::identifier);
-			si->matchIncr(token::less);
-		}
-		else
-		{
-			si->matchIncr(token::stringliteral);
-		}
+		si->matchIncr(token::include);
+		si->matchIncr(token::ppjunk);
 	}
 
 
@@ -245,8 +288,9 @@ namespace {
 
 	void nspacedecl(parser::state_info* si)
 	{
-		si->matchIncr(token::keyword);
-		si->matchIncr(token::identifier);
+		si->matchIncr(token::keyword, "namespace");
+		if(si->matchType(token::identifier))  // this will handle empty namespaces
+			si->matchIncr(token::identifier);
 
 		nspacebody(si);
 	}

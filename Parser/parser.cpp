@@ -28,6 +28,15 @@ parser::~parser() {
 
 struct parser::error
 {
+	error()
+		token_loc(-1), desc("invalid error object")
+	{}
+	
+	error(int tl, const std::string& d)
+		:token_loc(tl), desc(d)
+	{
+	}
+	
 	int token_loc;
 	token tok;
 	std::string desc;
@@ -72,6 +81,16 @@ struct parser::state_info
 	{
 		return (t == getCurrent().type());
 	}
+	
+	void incr()
+	{
+		++current_token;
+	}
+	
+	void incr(int i)
+	{
+		current_token += i;
+	}
 
 	bool matchType(token::TOKENTYPE t, int advancement)
 	{
@@ -83,8 +102,7 @@ struct parser::state_info
 
 		if(matchType(tok))
 		{
-			std::cout << text() << std::endl;
-			++current_token;
+			incr()
 		}
 		else
 		{
@@ -102,7 +120,7 @@ struct parser::state_info
 	{
 		if(matchType(tok) && matchText(txt))
 		{
-			++current_token;
+			incr();
 		}
 		else
 		{
@@ -154,9 +172,17 @@ namespace {
 	{
 		if(si->matchType(token::coloncolon))
 			si->matchIncr(token::coloncolon);
-		else if(si->matchType(token::identifier) && si ->matchType(token::coloncolon, 1))
+		while(true)
 		{
-			qlist();
+			si->matchIncr(token::identifier);
+			
+			if(!si->matchType(token::coloncolon))
+			{
+				break;
+			}
+			
+			// build identifier object here
+				
 		}
 	}
 

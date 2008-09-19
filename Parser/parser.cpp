@@ -163,12 +163,7 @@ void parser::parse()
  */
 namespace {
 
-	void q(parser::state_info* si)
-	{
-
-	}
-
-	void qlist(parser::state_info* si)
+	void ident(parser::state_info* si)
 	{
 		if(si->matchType(token::coloncolon))
 			si->matchIncr(token::coloncolon);
@@ -181,15 +176,11 @@ namespace {
 				break;
 			}
 			
+			si->matchIncr(token::coloncolon);
+			
 			// build identifier object here
 				
 		}
-	}
-
-	void ident(parser::state_info* si)
-	{
-		qlist(si);
-		si->matchIncr(token::identifier);
 	}
 
 	void ifdefdir(parser::state_info* si)

@@ -17,6 +17,12 @@
 #include "token.h"
 
 class lexer {
+	enum LEXSTATE
+	{
+		normal,
+		preproc
+	};
+
 public:
 	lexer();
 	lexer(std::ifstream* i);
@@ -59,9 +65,12 @@ private:
 	std::vector<token> tokens;
 	std::map<std::string, token> keys;
 	std::map<std::string, token> opers;
+	std::map<std::string, token> preprocs;
 
 	int lineNum;
 	int columnNum;
+
+	LEXSTATE state;
 };
 
 #endif /* LEXER_H_ */

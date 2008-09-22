@@ -24,6 +24,7 @@
 <tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1249888059" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 <option id="gnu.cpp.compiler.option.include.paths.2019377439" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lexical Analyzer}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lexical Analyzer}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.optimization.level.1839391108" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.debugging.level.406828941" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>

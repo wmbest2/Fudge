@@ -16,6 +16,7 @@ int main()
 
 	lexer my_lexer(test_stream);
 	my_lexer.tokenize();
+std::cout << "HERE" << std::endl;
 	parser my_parser(&my_lexer);
 	my_parser.parse();
 	test_stream->close();

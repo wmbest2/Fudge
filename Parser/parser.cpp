@@ -28,18 +28,20 @@ parser::~parser() {
 
 struct parser::error
 {
+
+	int token_loc;
+	token tok;
+	std::string desc;
+
 	error()
-		token_loc(-1), desc("invalid error object")
+		:token_loc(-1), desc("invalid error object")
 	{}
-	
+
 	error(int tl, const std::string& d)
 		:token_loc(tl), desc(d)
 	{
 	}
-	
-	int token_loc;
-	token tok;
-	std::string desc;
+
 };
 
 struct parser::state_info
@@ -81,12 +83,12 @@ struct parser::state_info
 	{
 		return (t == getCurrent().type());
 	}
-	
+
 	void incr()
 	{
 		++current_token;
 	}
-	
+
 	void incr(int i)
 	{
 		current_token += i;
@@ -99,10 +101,10 @@ struct parser::state_info
 
 	void matchIncr(token::TOKENTYPE tok)
 	{
-
+		std::cout << tok << std::endl;
 		if(matchType(tok))
 		{
-			incr()
+			incr();
 		}
 		else
 		{
@@ -152,7 +154,7 @@ void parser::parse()
 	}
 	catch(parser::error& e)
 	{
-		std::cout << e.desc << std:: endl;
+		std::cout << "(" << e.tok.line() << ", "<< e.tok.column() << ") " << e.desc << std:: endl;
 	}
 
 }
@@ -170,16 +172,16 @@ namespace {
 		while(true)
 		{
 			si->matchIncr(token::identifier);
-			
+
 			if(!si->matchType(token::coloncolon))
 			{
 				break;
 			}
-			
+
 			si->matchIncr(token::coloncolon);
-			
+
 			// build identifier object here
-				
+
 		}
 	}
 

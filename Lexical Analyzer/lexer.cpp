@@ -8,7 +8,9 @@
 #include "lexer.h"
 
 
-lexer::lexer() {
+lexer::lexer()
+	:state(lexer::normal)
+{
 	// TODO Auto-generated constructor stub
 	initializeKeywords();
 	initializeOperators();
@@ -16,7 +18,7 @@ lexer::lexer() {
 }
 
 lexer::lexer(std::ifstream* i)
-	:input(i)
+	:input(i), state(lexer::normal)
 {
 	// TODO Auto-generated constructor stub
 	initializeKeywords();
@@ -75,19 +77,19 @@ void lexer::initializeOperators()
 void lexer::initializePreProc()
 {
 	token tmp_token0(token::include, "include", -1, -1);
-	keys["include"] = tmp_token0;
+	preprocs["include"] = tmp_token0;
 
 	token tmp_token1(token::define, "define", -1, -1);
-	keys["define"] = tmp_token1;
+	preprocs["define"] = tmp_token1;
 
 	token tmp_token2(token::ifdef, "ifdef", -1, -1);
-	keys["ifdef"] = tmp_token2;
+	preprocs["ifdef"] = tmp_token2;
 
 	token tmp_token3(token::ifndef, "ifndef", -1, -1);
-	keys["ifndef"] = tmp_token3;
+	preprocs["ifndef"] = tmp_token3;
 
 	token tmp_token4(token::endif, "endif", -1, -1);
-	keys["endif"] = tmp_token4;
+	preprocs["endif"] = tmp_token4;
 }
 
 token lexer::get_token(int i)
@@ -111,68 +113,81 @@ void lexer::tokenize()
 	current = getChar();
 	while(!input->eof())
 	{
+		//std::cout << "HERE" << std::endl;
+		//std::cout << current << std::endl;
+		if(state == lexer::normal)
+		{
+			if(isspace(current))
+			{
+				eatWhiteSpace();
+			}
+			else if(current == '/' && (input->peek() == '/' || input->peek() == '*'))
+			{
+				eatComments();
+			}
+			else if (current == '#')
+			{
 
-		if(isspace(current))
-		{
-			eatWhiteSpace();
-		}
-		else if(current == '/' && (input->peek() == '/' || input->peek() == '*'))
-		{
-			eatComments();
-		}
-		else if (current == '#')
-		{
-			tokens.push_back(buildSingleOp(current)); // #
-			current = getChar();
+				tokens.push_back(buildSingleOp(current)); // #
 
-			tokens.push_back(buildKeyOrID(current)); // preproc directive
-			//std::cout << "UP: "<<tokens[tokens.size() -1].text() << std::endl;
-			//eatWhiteSpace();
-			//std::cout << input->peek() << std::endl;
+				state = lexer::preproc;
+
+				tokens.push_back(buildKeyOrID(current));
+
+				eatPreProc();
+
+			}
+			else if(current == '"')
+			{
+				tokens.push_back(buildString());
+			}
+			else if(current == '\'')
+			{
+				tokens.push_back(buildChar());
+			}
+			else if(isdigit(current))
+			{
+				tokens.push_back(buildNumber(current));
+			}
+			else if(isalpha(current) || current == '_')
+			{
+				tokens.push_back(buildKeyOrID(current));
+			}
+			else if(checkTripleOp(current))
+			{
+				tokens.push_back(buildTripleOp(current));
+			}
+			else if(checkDoubleOp(current))
+			{
+				tokens.push_back(buildDoubleOp(current));
+			}
+			else if(checkSingleOp(current))
+			{
+				tokens.push_back(buildSingleOp(current));
+			}
+			else
+			{
+				std::string tmp;
+				tmp += current;
+				token newToken(token::invalid, tmp, lineNum, columnNum - 1);
+				handleException(newToken);
+			}
+		}
+		else if (state == lexer::preproc)
+		{
+			tokens.push_back(buildPreProcDir(current));
 
 			eatPreProc();
-			//std::cout << "PP: "<< tokens[tokens.size() - 1].text();
+
+			state = lexer::normal;
 		}
-		else if(current == '"')
-		{
-			tokens.push_back(buildString());
-		}
-		else if(current == '\'')
-		{
-			tokens.push_back(buildChar());
-		}
-		else if(isdigit(current))
-		{
-			tokens.push_back(buildNumber(current));
-		}
-		else if(isalpha(current) || current == '_')
-		{
-			tokens.push_back(buildKeyOrID(current));
-		}
-		else if(checkTripleOp(current))
-		{
-			tokens.push_back(buildTripleOp(current));
-		}
-		else if(checkDoubleOp(current))
-		{
-			tokens.push_back(buildDoubleOp(current));
-		}
-		else if(checkSingleOp(current))
-		{
-			tokens.push_back(buildSingleOp(current));
-		}
-		else
-		{
-			std::string tmp;
-			tmp += current;
-			token newToken(token::invalid, tmp, lineNum, columnNum - 1);
-			handleException(newToken);
-		}
+
 		current = getChar();
 
 	}
 
 
+	//postProcess();
 }
 
 void lexer::eatWhiteSpace()
@@ -217,7 +232,6 @@ void lexer::eatComments()
 
 	}
 
-	postProcess();
 	// YUM
 }
 

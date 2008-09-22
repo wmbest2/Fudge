@@ -20,7 +20,8 @@ class lexer {
 	enum LEXSTATE
 	{
 		normal,
-		preproc
+		preprocdir,
+		preprocrest
 	};
 
 public:
@@ -31,7 +32,9 @@ public:
 	void setFstream(const std::string& file);
 
 	std::vector<token>& get_tokens();
-	token get_token(int i);
+	token get_token(unsigned int i);
+	//const std::string& typetostring(TOKENTYPE t);
+
 	void tokenize();
 
 
@@ -42,7 +45,7 @@ private:
 	void initializePreProc();
 	void eatWhiteSpace();
 	void eatComments();
-	void eatPreProc();
+	void eatPreProc(char first);
 	void postProcess();
 
 	bool checkTripleOp(char first);
@@ -54,6 +57,7 @@ private:
 	token buildString();
 	token buildChar();
 	token buildKeyOrID(char first);
+	token buildPreProcDir(char first);
 	token buildNumber(char first);
 	token buildTripleOp(char first);
 	token buildDoubleOp(char first);

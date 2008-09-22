@@ -92,7 +92,7 @@ void lexer::initializePreProc()
 	preprocs["endif"] = tmp_token4;
 }
 
-token lexer::get_token(int i)
+token lexer::get_token(unsigned int i)
 {
 
 	if(i >= 0 && i < tokens.size())
@@ -115,26 +115,23 @@ void lexer::tokenize()
 	{
 		//std::cout << "HERE" << std::endl;
 		//std::cout << current << std::endl;
-		if(state == lexer::normal)
-		{
-			if(isspace(current))
-			{
-				eatWhiteSpace();
-			}
-			else if(current == '/' && (input->peek() == '/' || input->peek() == '*'))
-			{
-				eatComments();
-			}
-			else if (current == '#')
-			{
 
+		if(isspace(current))
+		{
+			eatWhiteSpace();
+		}
+		else if(current == '/' && (input->peek() == '/' || input->peek() == '*'))
+		{
+			eatComments();
+		}
+		else if(state == lexer::normal)
+		{
+
+			if (current == '#')
+			{
 				tokens.push_back(buildSingleOp(current)); // #
 
-				state = lexer::preproc;
-
-				tokens.push_back(buildKeyOrID(current));
-
-				eatPreProc();
+				state = lexer::preprocdir;
 
 			}
 			else if(current == '"')
@@ -173,12 +170,20 @@ void lexer::tokenize()
 				handleException(newToken);
 			}
 		}
-		else if (state == lexer::preproc)
+		else if (state == lexer::preprocdir)
 		{
 			tokens.push_back(buildPreProcDir(current));
 
-			eatPreProc();
+			if((tokens[tokens.size()-1]).type() != token::endif)
+				state = lexer::preprocrest;
+			else
+				state = lexer::normal;
 
+		}
+		else if (state == lexer::preprocrest)
+		{
+			eatPreProc(current);
+			std::cout << (tokens[tokens.size()-1]).text() << std::endl;
 			state = lexer::normal;
 		}
 
@@ -264,7 +269,7 @@ void lexer::postProcess()
 	}
 }
 
-void lexer::eatPreProc()
+void lexer::eatPreProc(char first)
 {
 	//Eat the rest
 	char tmp;
@@ -272,6 +277,7 @@ void lexer::eatPreProc()
 	int line = lineNum;
 	int col = columnNum;
 	std::string tok;
+	tok += first;
 	bool exit = false;
 	while(!exit && !input->eof())
 	{
@@ -402,6 +408,23 @@ token lexer::buildKeyOrID(char first)
 	token newToken(tokenID, tok, lineNum, columnNum - tok.size());
 	return newToken;
 
+}
+
+token lexer::buildPreProcDir(char first)
+{
+	token pptok = buildKeyOrID(first);
+	//if(pptok.type() == token::identifier) // not needed because "if" is a keyword and a pp directive
+	{
+		if(preprocs.find(pptok.text()) != preprocs.end())
+		{
+			pptok.type(preprocs[pptok.text()].type());
+			std::cout << pptok.text() << std::endl;
+			return pptok;
+		}
+
+	}
+	token invalid;
+	return invalid;
 }
 
 token lexer::buildNumber(char first)

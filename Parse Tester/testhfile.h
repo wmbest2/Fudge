@@ -5,7 +5,7 @@
 namespace tokens
 {
 
-	class my_class : public Baseclass1
+	class my_class : public ::AA::BB::CC::DD::::FF
 	{
 
 	};

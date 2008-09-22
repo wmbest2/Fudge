@@ -111,7 +111,7 @@ struct parser::state_info
 			e.token_loc = current_token;
 			token tmp = getCurrent();
 			e.tok = tmp;
-			e.desc ="There was an error matching token to type ";
+			e.desc ="There was an error matching token ";
 
 			throw e;
 		}
@@ -129,7 +129,7 @@ struct parser::state_info
 			e.token_loc = current_token;
 			token tmp = getCurrent();
 			e.tok = tmp;
-			e.desc ="There was an error matching token to type ";
+			e.desc ="There was an error matching token ";
 
 			throw e;
 		}
@@ -154,7 +154,7 @@ void parser::parse()
 	}
 	catch(parser::error& e)
 	{
-		std::cout << "(" << e.tok.line() << ", "<< e.tok.column() << ") " << e.desc << std:: endl;
+		std::cout << "(" << e.tok.line() << ", "<< e.tok.column() << ") " << e.desc  << e.tok.text()<< std:: endl;
 	}
 
 }
@@ -180,7 +180,6 @@ namespace {
 
 			si->matchIncr(token::coloncolon);
 
-			// build identifier object here
 
 		}
 	}
@@ -232,7 +231,7 @@ namespace {
 	void baseclass(parser::state_info* si)
 	{
 		si->matchIncr(token::keyword);
-		si->matchIncr(token::identifier);
+		ident(si);
 	}
 
 	void baseclasses(parser::state_info* si)

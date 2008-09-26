@@ -101,7 +101,7 @@ struct parser::state_info
 
 	void matchIncr(token::TOKENTYPE tok)
 	{
-		std::cout << tok << std::endl;
+		//std::cout << tok << std::endl;
 		if(matchType(tok))
 		{
 			incr();
@@ -143,7 +143,7 @@ struct parser::state_info
 
 void parser::parse()
 {
-	std::cout << "parse" << std::endl;
+	//std::cout << "parse" << std::endl;
 	si = new state_info();
 	si->lex = file_lexer;
 	si->current_token = 0;
@@ -251,6 +251,70 @@ namespace {
 		si->matchIncr(token::colon);
 	}
 
+	void type(parser::state_info* si)
+	{
+		if(si->matchText("const"))
+			si->matchIncr(token::keyword, "const");
+		if(si->matchType(token::keyword))
+		{
+			si->matchIncr(token::keyword);
+		}
+		else
+			ident(si);
+
+		while(si->matchType(token::lsquare))
+		{
+			si->matchIncr(token::lsquare);
+			si->matchIncr(token::rsquare);
+		}
+
+		if(si->matchType(token::amp))
+			si->matchIncr(token::amp);
+		else if(si->matchType(token::ast))
+			si->matchIncr(token::amp);
+	}
+
+	void mvardecl(parser::state_info* si)
+	{
+		type(si);
+		si->matchIncr(token::identifier);
+	}
+
+	void mfunchead(parser::state_info* si)
+	{
+		type(si);
+		si->matchIncr(token::identifier);
+		si->matchIncr(token::lparen);
+		//params(si);
+		si->matchIncr(token::rparen);
+		if(si->matchText("const"))
+			si->matchIncr(token::keyword, "const");
+	}
+
+	void mfuncdecl(parser::state_info* si)
+	{
+		if(si->matchText("virtual"))
+			si->matchIncr(token::keyword, "virtual");
+		else if(si->matchText("inline"))
+			si->matchIncr(token::keyword, "inline");
+
+		mfunchead(si);
+		if(si->matchType(token::semi)) //prototype
+			si->matchIncr(token::semi);
+		else if(si->matchType(token::eq)) // pure virtual (should virtual be a requirement here I suppose it does)
+		{
+			si->matchIncr(token::eq);
+			si->matchIncr(token::number, "0");
+			si->matchIncr(token::semi);
+		}
+		else if(si->matchType(token::lcurly)) //will handle inline functions
+		{
+			//mfuncbody         should we keep this as one unit or break it down  Its already going to be broken down but it is possible to skip everything
+		}
+	}
+
+
+
 	void mdecls(parser::state_info* si)
 	{
 		if(si->matchText("public") || si->matchText("private") || si->matchText("protected") )
@@ -316,8 +380,17 @@ namespace {
 	void usingnsdecl(parser::state_info* si)
 	{
 		 // using
-		si->matchIncr(token::keyword, "namespace"); // namespace
-		si->matchIncr(token::identifier); // identifier
+		if(si->matchText("namespace"))
+		{
+				si->matchIncr(token::keyword, "namespace"); // namespace
+				ident(si); // identifier
+		}
+		else
+		{
+			ident(si);
+			si->matchType(token::identifier);
+		}
+
 		si->matchIncr(token::semi);
 	}
 
@@ -370,6 +443,6 @@ namespace {
 
 void parser::inclfile()
 {
-	std::cout << "inclfile" << std::endl;
+	//std::cout << "inclfile" << std::endl;
 	entities(si);
 }

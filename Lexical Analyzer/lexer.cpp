@@ -183,7 +183,7 @@ void lexer::tokenize()
 		else if (state == lexer::preprocrest)
 		{
 			eatPreProc(current);
-			std::cout << (tokens[tokens.size()-1]).text() << std::endl;
+			//std::cout << (tokens[tokens.size()-1]).text() << std::endl;
 			state = lexer::normal;
 		}
 
@@ -192,7 +192,7 @@ void lexer::tokenize()
 	}
 
 
-	//postProcess();
+	postProcess();
 }
 
 void lexer::eatWhiteSpace()
@@ -242,32 +242,22 @@ void lexer::eatComments()
 
 void lexer::postProcess()
 {
-
-	std::vector<token>::iterator itr;
-	std::vector<token>::iterator itr_next;
-	bool was_begin = false;
-	itr_next = tokens.begin();
-	for(itr = tokens.begin(); tokens.size() - 1; ++itr)
+	std::vector<token>::iterator itr = tokens.begin();
+	//std::cout << "POST PROCESS" << std::endl;
+	while(itr+1 != tokens.end())
 	{
-		if(was_begin)
+		//std::cout << itr->type() << ": " <<itr->text() << std::endl;
+		if(itr->type() == token::stringliteral && (itr + 1)->type() == token::stringliteral)
 		{
-			--itr;
+			itr->text(itr->text() + (itr+1)->text());
+			//std::cout << itr->text();
+			tokens.erase(itr+1);
 		}
-		++itr_next;
-		if(itr->type() == token::stringliteral &&
-			itr_next->type() == token::stringliteral)
-		{
-			itr->text(itr->text() + itr_next->text());
-			if(itr != tokens.begin())
-			{
-				--itr;
-			}
-			else
-				was_begin = true;
-			--itr_next;
-		}
+		else
+			++itr;
 	}
 }
+
 
 void lexer::eatPreProc(char first)
 {
@@ -359,7 +349,7 @@ token lexer::buildString()
 		tmp = getChar();
 	}
 	tok += tmp;
-	//std::cout << tok << std::endl;
+	//std::cout <<  "string: " << tok << std::endl;
 	token newToken(token::stringliteral, tok, lineNum, columnNum);
 	return newToken;
 }
@@ -418,7 +408,7 @@ token lexer::buildPreProcDir(char first)
 		if(preprocs.find(pptok.text()) != preprocs.end())
 		{
 			pptok.type(preprocs[pptok.text()].type());
-			std::cout << pptok.text() << std::endl;
+			//std::cout << pptok.text() << std::endl;
 			return pptok;
 		}
 

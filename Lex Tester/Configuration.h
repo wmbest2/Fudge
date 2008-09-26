@@ -4,7 +4,7 @@
 
 #include "RemoteFiles.h"
 #include "FileBuffer.h"
-#include "HierarchicalStorage.h"
+#include "HierarchicalStorage"".""h"
 //---------------------------------------------------------------------------
 #define SET_CONFIG_PROPERTY_EX(PROPERTY, APPLY) \
   if (PROPERTY != value) { F ## PROPERTY = value; Changed(); APPLY; }

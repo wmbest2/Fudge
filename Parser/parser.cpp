@@ -138,6 +138,10 @@ struct parser::state_info
 
 	parser::error e;
 
+	cppclass cur_class;
+	memfunc  cur_func;
+	cppvar  cur_var;
+
 	int size;
 };
 
@@ -274,10 +278,16 @@ namespace {
 			si->matchIncr(token::amp);
 	}
 
+	void msimpvar(parser::state_info* si)
+	{
+
+	}
+
 	void mvardecl(parser::state_info* si)
 	{
 		type(si);
 		si->matchIncr(token::identifier);
+		si->matchIncr(token::semi);
 	}
 
 	void mfunchead(parser::state_info* si)
@@ -289,6 +299,7 @@ namespace {
 		si->matchIncr(token::rparen);
 		if(si->matchText("const"))
 			si->matchIncr(token::keyword, "const");
+
 	}
 
 	void mfuncdecl(parser::state_info* si)
@@ -323,7 +334,7 @@ namespace {
 		}
 		else if(true)
 		{
-				//stuff for member variable, functions and other decls
+				mvardecl(si);
 		}
 	}
 

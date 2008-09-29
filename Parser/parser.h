@@ -9,6 +9,10 @@
 #define PARSER_H_
 
 #include "lexer.h"
+#include "cppvar.h"
+
+#include "cppclass.h"
+#include "memfunc.h"
 
 class parser {
 public:

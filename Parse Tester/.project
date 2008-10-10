@@ -3,6 +3,7 @@
 	<name>Parse Tester</name>
 	<comment></comment>
 	<projects>
+		<project>Parser</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

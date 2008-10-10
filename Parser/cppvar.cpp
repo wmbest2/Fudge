@@ -34,7 +34,12 @@ std::string cppvar::getName()
 	return id;
 }
 
+void cppvar::setInit(const std::string& iv)
+{
+	init_val = iv;
+}
+
 std::string cppvar::toString()
 {
-	return type.toString() + " " + id;
+	return type.toString() + " " + id + ((init_val != "")?(" = " + init_val ):(""));
 }

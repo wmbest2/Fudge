@@ -390,9 +390,23 @@ namespace {
 			v->setName(si->getCurrent().text());
 			si->matchIncr(token::identifier);
 
+
+			if(si->matchType(token::eq))
+			{
+				si->matchIncr(token::eq);
+				if(si->matchType(token::stringliteral) || si->matchType(token::number) || si->matchType(token::charliteral))
+				{
+					v->setInit(si->getCurrent().text());
+					si->matchIncr(si->getCurrent().type());
+				}
+
+			}
+
 			memfunc* f = (si->getStack<memfunc>());
 			f->addParam(*v);
 			delete v;
+
+
 
 			if(si->matchType(token::comma))
 				si->matchIncr(token::comma);
@@ -418,11 +432,11 @@ namespace {
 	void mfuncdecl(parser::state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
-/*
+
 		if(si->matchText("virtual"))
 			si->matchIncr(token::keyword, "virtual");
 		else if(si->matchText("inline"))
-			si->matchIncr(token::keyword, "inline");*/
+			si->matchIncr(token::keyword, "inline");
 
 		mfunchead(si);
 		if(si->matchType(token::semi))//prototype

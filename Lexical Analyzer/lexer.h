@@ -33,6 +33,8 @@ public:
 
 	std::vector<token>& get_tokens();
 	token get_token(unsigned int i);
+
+	int getSize();
 	//const std::string& typetostring(TOKENTYPE t);
 
 	void tokenize();

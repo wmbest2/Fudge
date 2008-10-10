@@ -40,6 +40,11 @@ std::vector<token>& lexer::get_tokens()
 	return tokens;
 }
 
+int lexer::getSize()
+{
+	return (int)tokens.size();
+}
+
 void lexer::initializeKeywords()
 {
 	std::ifstream keyword_list;

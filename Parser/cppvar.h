@@ -22,7 +22,7 @@ public:
 	void setName(std::string i);
 	std::string getName();
 
-	void setInit(std::string iv);
+	void setInit(const std::string& iv);
 
 	std::string toString();
 

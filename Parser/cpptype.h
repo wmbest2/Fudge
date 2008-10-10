@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <dbg.h>
 
 class cpptype
 {
@@ -17,6 +18,8 @@ public:
 	cpptype();
 
 	void addQual(std::string q);
+
+	std::string toString();
 
 	void setConst(bool c);
 	bool getConst();

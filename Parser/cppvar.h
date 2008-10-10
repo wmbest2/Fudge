@@ -17,6 +17,15 @@ public:
 	cppvar();
 	cppvar(cpptype t, std::string i, std::string iv);
 
+	void setType(cpptype t);
+
+	void setName(std::string i);
+	std::string getName();
+
+	void setInit(std::string iv);
+
+	std::string toString();
+
 private:
 
 	cpptype type;

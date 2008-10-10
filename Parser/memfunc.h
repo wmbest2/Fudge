@@ -24,6 +24,11 @@ public:
 
 	void addParam(cppvar p);
 
+	void setName(const std::string& s);
+	std::string getName();
+
+	std::string toString(const std::string& class_name);
+
 private:
 	std::string name;
 	bool is_virtual;

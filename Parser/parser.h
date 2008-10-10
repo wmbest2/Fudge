@@ -8,11 +8,13 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
+#include <stack>
 #include "lexer.h"
 #include "cppvar.h"
-
+#include "stackable.h"
 #include "cppclass.h"
 #include "memfunc.h"
+#include <dbg.h>
 
 class parser {
 public:
@@ -38,5 +40,7 @@ private:
 	state_info* si;
 
 };
+
+
 
 #endif /* PARSER_H_ */

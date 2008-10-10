@@ -18,3 +18,23 @@ cppvar::cppvar(cpptype t, std::string i, std::string iv)
 {
 
 }
+
+void cppvar::setType(cpptype t)
+{
+	type = t;
+}
+
+void cppvar::setName(std::string i)
+{
+	id = i;
+}
+
+std::string cppvar::getName()
+{
+	return id;
+}
+
+std::string cppvar::toString()
+{
+	return type.toString() + " " + id;
+}

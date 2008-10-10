@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 #include "memfunc.h"
+#include <dbg.h>
+#include <iostream>
 
 class cppclass
 {
@@ -19,12 +21,13 @@ public:
 	cppclass(const std::string& n);
 
 	void addfunc(memfunc f);
-
-
+	void addbaseclass(const std::string& access, const std::string& ident);
+	void setname(const std::string& ident);
+	void print();
 
 private:
 
-	std::vector<std::string> base_classes;
+	std::vector<std::pair<std::string,std::string> > base_classes;
 	std::vector<memfunc> functions;
 
 	std::string name;

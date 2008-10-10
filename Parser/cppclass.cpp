@@ -21,5 +21,38 @@ cppclass::cppclass(const std::string& n)
 
 void cppclass::addfunc(memfunc f)
 {
+	dbg::trace tr("cppclass", DBG_HERE);
+	functions.push_back(f);
+}
 
+void cppclass::addbaseclass(const std::string& access, const std::string& ident)
+{
+	dbg::trace tr("cppclass", DBG_HERE);
+	std::pair<std::string, std::string> p(access, ident);
+	dbg::out(dbg::info, "cppclass") << dbg::indent() << "Added Base Class: " << access << " " << ident << "\n";
+	base_classes.push_back(p);
+}
+
+void cppclass::setname(const std::string& ident)
+{
+	dbg::trace tr("cppclass", DBG_HERE);
+	name = ident;
+	dbg::out(dbg::info, "cppclass") << dbg::indent() << "Name changed to " << name << "\n";
+}
+
+void cppclass::print()
+{
+	std::cout << "Class: " << name << std::endl;
+
+	for(int i = 0; i < base_classes.size(); ++i)
+	{
+		std::cout << "Base: " << base_classes[i].second << std::endl;
+	}
+
+	for(int i = 0; i < functions.size(); ++i)
+	{
+		std::cout << "Function: " << functions[i].toString(name) << std::endl;
+	}
+
+	std::cout << std::endl;
 }

@@ -7,6 +7,8 @@
 
 #include "memfunc.h"
 
+#include "cppclass.h"
+
 memfunc::memfunc()
 {
 
@@ -39,12 +41,17 @@ std::string memfunc::getName()
 	return name;
 }
 
+void memfunc::setClass(cppclass* c)
+{
+	owner = c;
+}
+
 std::string memfunc::toString(const std::string& class_name)
 {
 	std::string out;
 	out += return_type.toString();
 	out += " ";
-	out += class_name;
+	out += owner->getQual();
 	out += "::";
 	out += name;
 	out += "(";

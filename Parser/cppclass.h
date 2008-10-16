@@ -23,6 +23,7 @@ public:
 	void addfunc(memfunc f);
 	void addbaseclass(const std::string& access, const std::string& ident);
 	void setname(const std::string& ident);
+	std::string getQual();
 	void print();
 
 private:

@@ -22,6 +22,7 @@ cppclass::cppclass(const std::string& n)
 void cppclass::addfunc(memfunc f)
 {
 	dbg::trace tr("cppclass", DBG_HERE);
+	f.setClass(this);
 	functions.push_back(f);
 }
 
@@ -38,6 +39,11 @@ void cppclass::setname(const std::string& ident)
 	dbg::trace tr("cppclass", DBG_HERE);
 	name = ident;
 	dbg::out(dbg::info, "cppclass") << dbg::indent() << "Name changed to " << name << "\n";
+}
+
+std::string cppclass::getQual()
+{
+	return name;
 }
 
 void cppclass::print()

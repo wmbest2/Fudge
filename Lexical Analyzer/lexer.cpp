@@ -249,12 +249,16 @@ void lexer::postProcess()
 {
 	std::vector<token>::iterator itr = tokens.begin();
 	//std::cout << "POST PROCESS" << std::endl;
+
 	while(itr+1 != tokens.end())
 	{
+
 		//std::cout << itr->type() << ": " <<itr->text() << std::endl;
 		if(itr->type() == token::stringliteral && (itr + 1)->type() == token::stringliteral)
 		{
-			itr->text(itr->text() + (itr+1)->text());
+			std::string text1 = itr->text();
+			std::string text2 = (itr+1)->text();
+			itr->text("\"" + text1.substr(1, text1.size()-2) + text2.substr(1, text2.size()-2) + "\"");
 			//std::cout << itr->text();
 			tokens.erase(itr+1);
 		}

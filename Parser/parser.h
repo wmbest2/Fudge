@@ -9,12 +9,16 @@
 #define PARSER_H_
 
 #include <stack>
-#include "lexer.h"
+
 #include "cppvar.h"
 #include "stackable.h"
 #include "cppclass.h"
 #include "memfunc.h"
+#include "cppnamespace.h"
 #include <dbg.h>
+#include <fstream>
+
+class lexer;
 
 class parser {
 public:
@@ -30,6 +34,7 @@ public:
 	virtual ~parser();
 
 	void parse();
+	void cppOutput(const std::string& filename);
 
 
 

@@ -16,8 +16,9 @@ public:
 	cppnamespace();
 	cppnamespace(const std::string& i);
 
+
 	void setName(const std::string& i);
-	std::string getName();
+	std::string getName() const;
 private:
 	std::string id;
 };

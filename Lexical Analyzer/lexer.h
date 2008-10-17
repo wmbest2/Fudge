@@ -35,6 +35,8 @@ public:
 	std::vector<token>& get_tokens();
 	token get_token(unsigned int i);
 
+	std::string getFileName();
+
 	int getSize();
 	//const std::string& typetostring(TOKENTYPE t);
 
@@ -73,6 +75,8 @@ private:
 	std::map<std::string, token> keys;
 	std::map<std::string, token> opers;
 	std::map<std::string, token> preprocs;
+
+	std::string filename;
 
 	int lineNum;
 	int columnNum;

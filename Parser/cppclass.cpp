@@ -41,13 +41,29 @@ void cppclass::setname(const std::string& ident)
 	dbg::out(dbg::info, "cppclass") << dbg::indent() << "Name changed to " << name << "\n";
 }
 
+void cppclass::setNamespace(cppnamespace n)
+{
+	owner = n;
+}
+
+cppnamespace cppclass::getNamespace()
+{
+	return owner;
+}
+
 std::string cppclass::getQual()
+{
+	return name;
+}
+
+std::string cppclass::getName()
 {
 	return name;
 }
 
 void cppclass::print()
 {
+
 	std::cout << "Class: " << name << std::endl;
 
 	for(int i = 0; i < base_classes.size(); ++i)
@@ -61,4 +77,21 @@ void cppclass::print()
 	}
 
 	std::cout << std::endl;
+}
+
+std::string cppclass::cppOutput()
+{
+	std::string out;
+
+	if(owner.getName() != "invalid")
+	{
+		out += "using " + owner.getName() + "::" + name + ";\n\n";
+	}
+
+	for(int i = 0; i < functions.size(); ++i)
+	{
+		out += functions[i].toString(name) + "\n\n";
+	}
+
+	return out;
 }

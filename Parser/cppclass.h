@@ -14,6 +14,8 @@
 #include <dbg.h>
 #include <iostream>
 
+#include "cppnamespace.h"
+
 class cppclass
 {
 public:
@@ -23,16 +25,19 @@ public:
 	void addfunc(memfunc f);
 	void addbaseclass(const std::string& access, const std::string& ident);
 	void setname(const std::string& ident);
+	void setNamespace(cppnamespace n);
+	cppnamespace getNamespace();
 	std::string getName();
 	std::string getQual();
 	void print();
+	std::string cppOutput();
 
 private:
 
 	std::vector<std::pair<std::string,std::string> > base_classes;
 	std::vector<memfunc> functions;
 
-	cppnamespace* owner;
+	cppnamespace owner;
 	std::string name;
 };
 

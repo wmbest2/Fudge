@@ -6,8 +6,8 @@
  */
 #include <fstream>
 #include <iostream>
-#include <lexer.h>
-#include <parser.h>
+#include "lexer.h"
+#include "parser.h"
 #include <dbg.h>
 
 int main()
@@ -19,15 +19,11 @@ int main()
 	dbg::attach_ostream(dbg::all, "parser_helpers", std::cout);
 
 
-	std::ifstream* test_stream = new std::ifstream();
-	test_stream->open("testhfile.h");
+	//lexer my_lexer("testhfile.h");
+	//my_lexer.tokenize();
 
-	lexer my_lexer(test_stream);
-	my_lexer.tokenize();
-
-	parser my_parser(&my_lexer);
+	parser my_parser("testhfile.h");
 	my_parser.parse();
-	test_stream->close();
-	delete test_stream;
+	my_parser.cppOutput("testhfile.cpp");
 	return 0;
 }

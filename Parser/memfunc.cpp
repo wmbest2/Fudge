@@ -63,7 +63,7 @@ std::string memfunc::toString(const std::string& class_name)
 			out += ", ";
 	}
 
-	out += ");";
+	out += "){\n\n\n}";
 
 	return out;
 }

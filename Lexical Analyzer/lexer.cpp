@@ -17,8 +17,8 @@ lexer::lexer()
 	initializePreProc();
 }
 
-lexer::lexer(const std::string& filename)
-	:input(new std::ifstream()), state(lexer::normal)
+lexer::lexer(const std::string& file)
+	:input(new std::ifstream()), state(lexer::normal), filename(file)
 {
 	input->open(filename.c_str());
 	initializeKeywords();
@@ -41,12 +41,18 @@ lexer::~lexer() {
 
 void lexer::setFstream(const std::string& file)
 {
+	filename = file;
 	input->open(file.c_str());
 }
 
 std::vector<token>& lexer::get_tokens()
 {
 	return tokens;
+}
+
+std::string lexer::getFileName()
+{
+	return filename;
 }
 
 int lexer::getSize()

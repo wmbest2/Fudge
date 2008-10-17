@@ -23,6 +23,7 @@ public:
 	void addfunc(memfunc f);
 	void addbaseclass(const std::string& access, const std::string& ident);
 	void setname(const std::string& ident);
+	std::string getName();
 	std::string getQual();
 	void print();
 
@@ -31,6 +32,7 @@ private:
 	std::vector<std::pair<std::string,std::string> > base_classes;
 	std::vector<memfunc> functions;
 
+	cppnamespace* owner;
 	std::string name;
 };
 

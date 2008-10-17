@@ -14,6 +14,12 @@ parser::parser()
 
 }
 
+parser::parser(const std::string& filename)
+	:file_lexer(new lexer(filename))
+{
+
+}
+
 parser::parser(lexer* lex)
 	:file_lexer(lex)
 {
@@ -171,6 +177,7 @@ struct parser::state_info
 void parser::parse()
 {
 	//std::cout << "parse" << std::endl;
+	file_lexer->tokenize();
 	si = new state_info();
 	si->lex = file_lexer;
 	si->current_token = 0;
@@ -185,6 +192,7 @@ void parser::parse()
 	}
 
 }
+
 
 /**
  * Recursive Descent Parser Functions

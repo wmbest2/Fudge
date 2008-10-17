@@ -24,6 +24,7 @@ public:
 	struct state_info;
 
 	parser();
+	parser(const std::string& filename);
 	parser(lexer* lex);
 
 	virtual ~parser();

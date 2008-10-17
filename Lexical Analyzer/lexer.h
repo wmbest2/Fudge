@@ -26,6 +26,7 @@ class lexer {
 
 public:
 	lexer();
+	lexer(const std::string& file);
 	lexer(std::ifstream* i);
 	virtual ~lexer();
 

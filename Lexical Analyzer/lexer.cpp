@@ -17,6 +17,15 @@ lexer::lexer()
 	initializePreProc();
 }
 
+lexer::lexer(const std::string& filename)
+	:input(new std::ifstream()), state(lexer::normal)
+{
+	input->open(filename.c_str());
+	initializeKeywords();
+	initializeOperators();
+	initializePreProc();
+}
+
 lexer::lexer(std::ifstream* i)
 	:input(i), state(lexer::normal)
 {

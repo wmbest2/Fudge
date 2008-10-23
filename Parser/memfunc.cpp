@@ -46,7 +46,7 @@ void memfunc::setClass(cppclass* c)
 	owner = c;
 }
 
-std::string memfunc::toString(const std::string& class_name)
+std::string memfunc::toString()
 {
 	std::string out;
 	out += return_type.toString();
@@ -66,4 +66,29 @@ std::string memfunc::toString(const std::string& class_name)
 	out += "){\n\n\n}";
 
 	return out;
+}
+
+void memfunc::cppOutput(const std::string& file)
+{
+
+	std::ofstream of;
+	of.open(file.c_str(), std::ios_base::app);
+
+	of << return_type.toString();
+	of << " ";
+	of << owner->getQual();
+	of << "::";
+	of << name;
+	of << "(";
+
+	for(int i = 0; i < params.size(); ++i)
+	{
+		of << params[i].toString();
+		if(i != params.size() - 1)
+			of << ", ";
+	}
+
+	of << "){\n\n\n}\n";
+
+	of.close();
 }

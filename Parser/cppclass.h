@@ -8,6 +8,7 @@
 #ifndef CPPCLASS_H_
 #define CPPCLASS_H_
 
+#include <fstream>
 #include <string>
 #include <vector>
 #include "memfunc.h"
@@ -31,6 +32,7 @@ public:
 	std::string getQual();
 	void print();
 	std::string cppOutput();
+	void cppOutput(const std::string& file);
 
 private:
 

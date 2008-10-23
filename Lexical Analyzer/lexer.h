@@ -42,6 +42,8 @@ public:
 
 	void tokenize();
 
+	bool find(const std::string& txt_to_find, int start, const std::string& terminator);
+
 
 
 private:

@@ -73,7 +73,7 @@ void cppclass::print()
 
 	for(int i = 0; i < functions.size(); ++i)
 	{
-		std::cout << "Function: " << functions[i].toString(name) << std::endl;
+		std::cout << "Function: " << functions[i].toString() << std::endl;
 	}
 
 	std::cout << std::endl;
@@ -90,8 +90,32 @@ std::string cppclass::cppOutput()
 
 	for(int i = 0; i < functions.size(); ++i)
 	{
-		out += functions[i].toString(name) + "\n\n";
+		out += functions[i].toString() + "\n\n";
 	}
 
 	return out;
+}
+
+void cppclass::cppOutput(const std::string& file)
+{
+	std::ofstream of;
+	of.open(file.c_str(), std::ios_base::app);
+
+
+	if(owner.getName() != "invalid")
+	{
+		of << "using " << owner.getName() << "::" << name << ";\n\n";
+	}
+	of.close();
+	for(int i = 0; i < functions.size(); ++i)
+	{
+		functions[i].cppOutput(file);
+	}
+
+	//std::ofstream of;
+	of.open(file.c_str(), std::ios_base::app);
+	of << "\n\n";
+	of.close();
+
+
 }

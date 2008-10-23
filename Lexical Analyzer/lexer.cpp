@@ -124,6 +124,23 @@ token lexer::get_token(unsigned int i)
 	}
 }
 
+bool find(const std::string& txt_to_find, int start, const std::string& terminator)
+{
+	token newtok(token::invalid, "INVALID", -1, -1)
+	int count = 0;
+	while(newtok.text() != terminator)
+	{
+		if(get_token(start + count).text() = txt_to_find)
+		{
+			return true;
+		}
+
+		++count;
+	}
+
+	return false;
+}
+
 void lexer::tokenize()
 {
 	char current;

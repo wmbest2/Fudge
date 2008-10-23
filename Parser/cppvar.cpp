@@ -41,5 +41,5 @@ void cppvar::setInit(const std::string& iv)
 
 std::string cppvar::toString()
 {
-	return type.toString() + " " + id + ((init_val != "")?(" = " + init_val ):(""));
+	return type.toString() + " " + id;
 }

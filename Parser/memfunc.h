@@ -8,6 +8,7 @@
 #ifndef MEMFUNC_H_
 #define MEMFUNC_H_
 
+#include <fstream>
 #include <string>
 #include <vector>
 #include "cppvar.h"
@@ -31,7 +32,9 @@ public:
 
 	void setClass(cppclass* c);
 
-	std::string toString(const std::string& class_name);
+	std::string toString();
+
+	void cppOutput(const std::string& file);
 
 private:
 	std::string name;

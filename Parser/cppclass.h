@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include "memfunc.h"
+#include "memfuncstr.h"
 #include <dbg.h>
 #include <iostream>
 

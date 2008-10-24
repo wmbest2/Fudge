@@ -34,7 +34,7 @@ public:
 
 	std::string toString();
 
-	void cppOutput(const std::string& file);
+	const std::string& getString();
 
 private:
 	std::string name;
@@ -43,6 +43,8 @@ private:
 	bool is_pure;
 	bool is_static;
 
+	bool string_dirty;
+	std::string output;
 	cppclass* owner;
 
 	cpptype return_type;

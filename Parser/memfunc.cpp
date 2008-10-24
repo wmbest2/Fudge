@@ -15,23 +15,26 @@ memfunc::memfunc()
 }
 
 memfunc::memfunc(std::string n, bool v, bool c, bool p, bool s)
-	:name(n), is_virtual(v), is_const(c), is_pure(p), is_static(s)
+	:name(n), is_virtual(v), is_const(c), is_pure(p), is_static(s),string_dirty(true)
 {
 
 }
 
 void memfunc::setReturn(cpptype t)
 {
+	string_dirty = true;
 	return_type = t;
 }
 
 void memfunc::addParam(cppvar p)
 {
+	string_dirty = true;
 	params.push_back(p);
 }
 
 void memfunc::setName(const std::string& s)
 {
+	string_dirty = true;
 	name = s;
 }
 
@@ -43,6 +46,7 @@ std::string memfunc::getName()
 
 void memfunc::setClass(cppclass* c)
 {
+	string_dirty = true;
 	owner = c;
 }
 
@@ -68,27 +72,28 @@ std::string memfunc::toString()
 	return out;
 }
 
-void memfunc::cppOutput(const std::string& file)
+const std::string& getString()
 {
-
-	std::ofstream of;
-	of.open(file.c_str(), std::ios_base::app);
-
-	of << return_type.toString();
-	of << " ";
-	of << owner->getQual();
-	of << "::";
-	of << name;
-	of << "(";
-
-	for(int i = 0; i < params.size(); ++i)
+	if(string_dirty)
 	{
-		of << params[i].toString();
-		if(i != params.size() - 1)
-			of << ", ";
+		output = return_type.toString();
+		output += " ";
+		output += owner->getQual();
+		output += "::";
+		output += name;
+		output += "(";
+
+		for(int i = 0; i < params.size(); ++i)
+		{
+			output += params[i].toString();
+			if(i != params.size() - 1)
+				output += ", ";
+		}
+
+		output += "){\n\n\n}\n";
+
+		string_dirty = false;
 	}
 
-	of << "){\n\n\n}\n";
-
-	of.close();
+	return output;
 }

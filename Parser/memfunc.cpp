@@ -72,8 +72,9 @@ std::string memfunc::toString()
 	return out;
 }
 
-const std::string& getString()
+std::string& memfunc::getString()
 {
+	std::cout << "HERE" << std::endl;
 	if(string_dirty)
 	{
 		output = return_type.toString();

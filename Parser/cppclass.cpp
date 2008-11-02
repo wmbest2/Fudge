@@ -79,21 +79,32 @@ void cppclass::print()
 	std::cout << std::endl;
 }
 
-std::string cppclass::cppOutput()
+const std::vector<ref*>& cppclass::cppOutput()
 {
-	std::string out;
+	for(int i = 0; i < outputrefs.size(); ++i)
+	{
+		delete outputrefs[i];
+	}
+	outputrefs.clear();
 
 	if(owner.getName() != "invalid")
 	{
-		out += "using " + owner.getName() + "::" + name + ";\n\n";
+		prefuncout = "using " + owner.getName() + "::" + name + ";\n\n";
 	}
+	stringref* tmp = new stringref(prefuncout);
+	outputrefs.push_back(tmp);
 
 	for(int i = 0; i < functions.size(); ++i)
 	{
-		out += functions[i].toString() + "\n\n";
+
+		memfuncstr* funcstr = new memfuncstr(&(functions[i]));
+		outputrefs.push_back(funcstr);
 	}
 
-	return out;
+	stringref* tmp2= new stringref(postfuncout);
+	outputrefs.push_back(tmp2);
+
+	return outputrefs;
 }
 
 void cppclass::cppOutput(const std::string& file)
@@ -106,14 +117,12 @@ void cppclass::cppOutput(const std::string& file)
 	{
 		of << "using " << owner.getName() << "::" << name << ";\n\n";
 	}
-	of.close();
+
 	for(int i = 0; i < functions.size(); ++i)
 	{
-		functions[i].cppOutput(file);
+		of << functions[i].getString();
 	}
 
-	//std::ofstream of;
-	of.open(file.c_str(), std::ios_base::app);
 	of << "\n\n";
 	of.close();
 

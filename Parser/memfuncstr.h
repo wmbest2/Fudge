@@ -9,10 +9,29 @@
 #define MEMFUNCSTR_H_
 
 #include <string>
+#include <iostream>
 #include "memfunc.h"
 
-class stringref
+class ref
 {
+public:
+	ref()
+	{
+
+	}
+
+	virtual ~ref()
+	{
+
+	}
+
+	virtual const std::string& toString() = 0;
+
+};
+
+class stringref : public ref
+{
+public:
 	stringref()
 	{
 
@@ -39,7 +58,7 @@ private:
 	std::string str;
 };
 
-class memfuncstr : public stringref
+class memfuncstr : public ref
 {
 public:
 	memfuncstr()
@@ -52,8 +71,9 @@ public:
 
 	}
 
-	const std::string& toString()
+	virtual const std::string& toString()
 	{
+		std::cout << "toString " << func->getName() << std::endl;
 		return func->getString();
 	}
 private:

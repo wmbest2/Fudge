@@ -34,7 +34,7 @@ public:
 
 	std::string toString();
 
-	const std::string& getString();
+	std::string& getString();
 
 private:
 	std::string name;

@@ -32,13 +32,18 @@ public:
 	std::string getName();
 	std::string getQual();
 	void print();
-	std::string cppOutput();
+	const std::vector<ref*>& cppOutput();
 	void cppOutput(const std::string& file);
 
 private:
 
 	std::vector<std::pair<std::string,std::string> > base_classes;
 	std::vector<memfunc> functions;
+
+	std::string prefuncout;
+	std::string postfuncout;
+	std::vector<ref*> outputrefs;
+
 
 	cppnamespace owner;
 	std::string name;

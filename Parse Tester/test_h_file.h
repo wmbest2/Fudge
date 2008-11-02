@@ -11,6 +11,8 @@
 namespace {
 	class myclass
 	{
+		myclass();
+
 		void func1();
 
 		int func2();

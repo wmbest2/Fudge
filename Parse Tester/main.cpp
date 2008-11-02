@@ -12,10 +12,10 @@
 
 int main()
 {
-	dbg::enable(dbg::all, "cppclass", true);
+	dbg::enable(dbg::all, "cppclass", false);
 	dbg::attach_ostream(dbg::all, "cppclass", std::cout);
 
-	dbg::enable(dbg::all, "parser_helpers", true);
+	dbg::enable(dbg::all, "parser_helpers", false);
 	dbg::attach_ostream(dbg::all, "parser_helpers", std::cout);
 
 

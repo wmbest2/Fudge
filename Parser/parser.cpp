@@ -463,8 +463,12 @@ namespace {
 		si->matchIncr(token::keyword);
 		std::string name = (si->getCurrent()).text();
 		si->matchIncr(token::identifier);
+
+		dbg::out(dbg::info, "parser_helpers") << dbg::indent() << name << std::endl;
+
 		if(si->current_namespace.getName() != "invalid")
-		(si->getStack<cppclass>())->setNamespace(si->current_namespace);
+			(si->getStack<cppclass>())->setNamespace(si->current_namespace);
+
 		(si->getStack<cppclass>())->setname(name);
 		if(si->matchType(token::colon))
 		{
@@ -516,7 +520,6 @@ namespace {
 
 		si->current_namespace = cur;
 
-		std::cout << cur.getName() << std::endl;
 		nspacebody(si);
 	}
 

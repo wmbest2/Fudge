@@ -29,10 +29,11 @@
 <option id="gnu.cpp.compiler.lib.debug.option.optimization.level.1697879840" name="Optimization Level" superClass="gnu.cpp.compiler.lib.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.lib.debug.option.debugging.level.1615326844" name="Debug Level" superClass="gnu.cpp.compiler.lib.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.1702800101" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GenHelpers}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lexical Analyzer}&quot;"/>
 <listOptionValue builtIn="false" value="/home/wmb001/include"/>
 </option>
-<option id="gnu.cpp.compiler.option.preprocessor.def.1005568260" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+<option id="gnu.cpp.compiler.option.preprocessor.def.1005568260" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="DBG_ENABLED"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.120753840" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>

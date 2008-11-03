@@ -54,7 +54,7 @@ private:
 	void eatWhiteSpace();
 	void eatComments();
 	void NonGenerated(char first);
-	void builtFuncHeader(char first);
+	void buildFuncHeader(char first);
 	void postProcess();
 
 	bool checkTripleOp(char first);

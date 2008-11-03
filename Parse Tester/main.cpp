@@ -12,17 +12,17 @@
 
 int main()
 {
-	dbg::enable(dbg::all, "cppclass", false);
+	dbg::enable(dbg::all, "cppclass", true);
 	dbg::attach_ostream(dbg::all, "cppclass", std::cout);
 
-	dbg::enable(dbg::all, "parser_helpers", false);
+	dbg::enable(dbg::all, "parser_helpers", true);
 	dbg::attach_ostream(dbg::all, "parser_helpers", std::cout);
 
 
 	//lexer my_lexer("testhfile.h");
 	//my_lexer.tokenize();
 
-	parser my_parser("test_h_file.h");
+	parser my_parser("testhfile.h");
 	my_parser.parse();
 	my_parser.cppOutput("test_h_file.cpp");
 	return 0;

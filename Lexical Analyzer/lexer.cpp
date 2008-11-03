@@ -123,8 +123,8 @@ token lexer::get_token(unsigned int i)
 		return newtok;
 	}
 }
-
-bool find(const std::string& txt_to_find, int start, const std::string& terminator)
+/*
+bool lexer::find(const std::string& txt_to_find, int start, const std::string& terminator)
 {
 	token newtok(token::invalid, "INVALID", -1, -1)
 	int count = 0;
@@ -139,7 +139,7 @@ bool find(const std::string& txt_to_find, int start, const std::string& terminat
 	}
 
 	return false;
-}
+}*/
 
 void lexer::tokenize()
 {

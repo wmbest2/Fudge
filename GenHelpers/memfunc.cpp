@@ -54,7 +54,8 @@ std::string memfunc::toString()
 {
 	std::string out;
 	out += return_type.toString();
-	out += " ";
+	if(return_type.toString() != "")
+		out += " ";
 	out += owner->getQual();
 	out += "::";
 	out += name;

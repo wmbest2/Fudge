@@ -8,6 +8,10 @@
 #ifndef STATE_INFO_H_
 #define STATE_INFO_H_
 
+#include <stack>
+#include "token.h"
+#include "stackable.h"
+
 struct error
 {
 
@@ -35,6 +39,7 @@ struct state_info
 	template<typename T>
 	T* getStack()
 	{
+		std::cout << "JHHSKAAFJS" << std::endl;
 		stackitem<T>* tmp = dynamic_cast<stackitem<T>*>(obj_stack.top());
 		return (T*)tmp->getcur();
 	}

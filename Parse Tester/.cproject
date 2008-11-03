@@ -25,6 +25,7 @@
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.785284607" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1356942383" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.74756490" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GenHelpers}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lexical Analyzer}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parser}&quot;"/>
 <listOptionValue builtIn="false" value="/home/wmb001/include"/>
@@ -45,12 +46,14 @@
 <listOptionValue builtIn="false" value="/home/wmb001/lib/dbg.o"/>
 </option>
 <option id="gnu.cpp.link.option.paths.155616697" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GenHelpers/Debug}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lexical Analyzer/Debug}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parser/Debug}&quot;"/>
 </option>
 <option id="gnu.cpp.link.option.libs.902595354" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="Parser"/>
 <listOptionValue builtIn="false" value="LexicalAnalyzer"/>
+<listOptionValue builtIn="false" value="GenHelpers"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1032297612" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

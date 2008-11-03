@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Parse Tester</name>
+	<name>GenHelpers</name>
 	<comment></comment>
 	<projects>
-		<project>GenHelpers</project>
-		<project>Lexical Analyzer</project>
-		<project>Parser</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -34,7 +31,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/Parse Tester/Debug}</value>
+					<value>${workspace_loc:/GenHelpers/Debug}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>

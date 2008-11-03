@@ -5,7 +5,7 @@
 namespace tokens
 {
 
-	class my_class : public ::AA::BB::CC::DD::EE::FF
+	class my_class2 : public ::AA::BB::CC::DD::EE::FF
 	{
 		const std::string & helloworld(int x, int y=0);
 

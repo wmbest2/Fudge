@@ -169,7 +169,7 @@ void plexser::NonGenerated(char first)
 
 }
 
-void plexser::builtFuncHeader(char first)
+void plexser::buildFuncHeader(char first)
 {
 
 }

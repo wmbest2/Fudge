@@ -19,13 +19,14 @@
 #include <fstream>
 
 class lexer;
+struct state_info;
+struct error;
 
 class parser {
 public:
 
 
-	struct error;
-	struct state_info;
+
 
 	parser();
 	parser(const std::string& filename);

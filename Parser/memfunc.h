@@ -32,6 +32,8 @@ public:
 
 	void setClass(cppclass* c);
 
+	void setBody(const std::string& s);
+
 	std::string toString();
 
 	std::string& getString();
@@ -42,9 +44,11 @@ private:
 	bool is_const;
 	bool is_pure;
 	bool is_static;
+	bool is_inline;
 
 	bool string_dirty;
 	std::string output;
+	std::string function_body;
 	cppclass* owner;
 
 	cpptype return_type;

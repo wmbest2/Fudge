@@ -8,6 +8,7 @@
 #include "parser.h"
 #include "lexer.h"
 #include "memfuncstr.h"
+#include "state_info.h"
 
 parser::parser()
 	:file_lexer(new lexer())
@@ -32,151 +33,6 @@ parser::~parser() {
 	// TODO Auto-generated destructor stub
 }
 
-
-
-struct parser::error
-{
-
-	int token_loc;
-	token tok;
-	std::string desc;
-
-	error()
-		:token_loc(-1), desc("invalid error object")
-	{}
-
-	error(int tl, const std::string& d)
-		:token_loc(tl), desc(d)
-	{
-	}
-
-};
-
-struct parser::state_info
-{
-	lexer* lex;
-	int current_token;
-	std::stack<stackable*> obj_stack;
-
-	template<typename T>
-	T* getStack()
-	{
-		stackitem<T>* tmp = dynamic_cast<stackitem<T>*>(obj_stack.top());
-		return (T*)tmp->getcur();
-	}
-
-	template <typename T>
-	void pushStack(T* p)
-	{
-		obj_stack.push((stackable *)(new stackitem<T>(p)));
-	}
-
-	void popStack()
-	{
-		obj_stack.pop();
-	}
-
-
-	token getCurrent()
-	{
-		return lex->get_token(current_token);
-	}
-
-	token getAt(int i)
-	{
-		return lex->get_token(i);
-	}
-
-	bool hasTokens()
-	{
-		return current_token == lex->getSize() - 1;
-	}
-
-	std::string text()
-	{
-		return getCurrent().text();
-	}
-
-	token::TOKENTYPE type()
-	{
-		return getCurrent().type();
-	}
-
-	bool matchText(const std::string& t)
-	{
-		return (t == getCurrent().text());
-	}
-
-	bool matchText(const std::string& t, int advancement)
-	{
-		return (t == getAt(current_token + advancement).text());
-	}
-
-	bool matchType(token::TOKENTYPE t)
-	{
-		return (t == getCurrent().type());
-	}
-
-	void incr()
-	{
-		++current_token;
-	}
-
-	void incr(int i)
-	{
-		current_token += i;
-	}
-
-	bool matchType(token::TOKENTYPE t, int advancement)
-	{
-		return (t == getAt(current_token + advancement).type());
-	}
-
-	void matchIncr(token::TOKENTYPE tok)
-	{
-		if(matchType(tok))
-		{
-			incr();
-		}
-		else
-		{
-			e.token_loc = current_token;
-			token tmp = getCurrent();
-			e.tok = tmp;
-			e.desc ="There was an error matching token ";
-
-			throw e;
-		}
-
-	}
-
-	void matchIncr(token::TOKENTYPE tok, const std::string& txt)
-	{
-		if(matchType(tok) && matchText(txt))
-		{
-			incr();
-		}
-		else
-		{
-			e.token_loc = current_token;
-			token tmp = getCurrent();
-			e.tok = tmp;
-			e.desc ="There was an error matching token ";
-
-			throw e;
-		}
-	}
-
-	/******************************************
-	 *             retrieve objects           *
-	 ******************************************/
-
-	cppnamespace current_namespace;
-
-	parser::error e;
-	int size;
-};
-
 void parser::parse()
 {
 	//std::cout << "parse" << std::endl;
@@ -189,7 +45,7 @@ void parser::parse()
 	{
 		inclfile();
 	}
-	catch(parser::error& e)
+	catch(error& e)
 	{
 		std::cout << "(" << e.tok.line() << ", "<< e.tok.column() << ") " << e.desc  << e.tok.text()<< std:: endl;
 	}
@@ -229,7 +85,7 @@ void parser::cppOutput(const std::string& filename)
  */
 namespace {
 
-	void ident(parser::state_info* si)
+	void ident(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -264,7 +120,7 @@ namespace {
 		dbg::out(dbg::info, "parser_helpers") <<std::endl;
 	}
 
-	void ifdefdir(parser::state_info* si)
+	void ifdefdir(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -285,7 +141,7 @@ namespace {
 
 
 	}
-	void defdir(parser::state_info* si)
+	void defdir(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -294,7 +150,7 @@ namespace {
 
 	}
 
-	void incldir(parser::state_info* si)
+	void incldir(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -303,7 +159,7 @@ namespace {
 	}
 
 
-	void preproc(parser::state_info* si)
+	void preproc(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -317,7 +173,7 @@ namespace {
 
 	}
 
-	void baseclass(parser::state_info* si)
+	void baseclass(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 		std::string p = si->getCurrent().text();
@@ -338,7 +194,7 @@ namespace {
 
 
 
-	void baseclasses(parser::state_info* si)
+	void baseclasses(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -350,7 +206,7 @@ namespace {
 		}
 	}
 
-	void access_scope(parser::state_info* si)
+	void access_scope(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -358,7 +214,7 @@ namespace {
 		si->matchIncr(token::colon);
 	}
 
-	void type(parser::state_info* si)
+	void type(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -405,7 +261,7 @@ namespace {
 	}
 
 
-	void mvardecl(parser::state_info* si)
+	void mvardecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -415,7 +271,7 @@ namespace {
 		si->matchIncr(token::semi);
 	}
 
-	void params(parser::state_info* si)
+	void params(state_info* si)
 	{
 		while(!si->matchType(token::rparen))
 		{
@@ -451,7 +307,7 @@ namespace {
 		}
 	}
 
-	void mfunchead(parser::state_info* si)
+	void mfunchead(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 		memfunc* f = (si->getStack<memfunc>());
@@ -467,7 +323,7 @@ namespace {
 
 	}
 
-	void mfuncdecl(parser::state_info* si)
+	void mfuncdecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -493,7 +349,7 @@ namespace {
 		}
 	}
 
-	void mconstructdecl(parser::state_info* si)
+	void mconstructdecl(state_info* si)
 	{
 		memfunc* f = (si->getStack<memfunc>());
 
@@ -532,7 +388,7 @@ namespace {
 
 
 
-	void mdecls(parser::state_info* si)
+	void mdecls(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -588,7 +444,7 @@ namespace {
 		}
 	}
 
-	void classbody(parser::state_info* si)
+	void classbody(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -600,7 +456,7 @@ namespace {
 
 	}
 
-	void classdecl(parser::state_info* si)
+	void classdecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -619,19 +475,19 @@ namespace {
 		classbody(si);
 	}
 
-	void gfuncdecl(parser::state_info* si)
+	void gfuncdecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 	}
 
-	void gvardecl(parser::state_info* si)
+	void gvardecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 	}
 
-	void decls(parser::state_info* si);
+	void decls(state_info* si);
 
-	void nspacebody(parser::state_info* si)
+	void nspacebody(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -643,7 +499,7 @@ namespace {
 		si->matchIncr(token::rcurly);
 	}
 
-	void nspacedecl(parser::state_info* si)
+	void nspacedecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -664,7 +520,7 @@ namespace {
 		nspacebody(si);
 	}
 
-	void usingnsdecl(parser::state_info* si)
+	void usingnsdecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -683,7 +539,7 @@ namespace {
 		si->matchIncr(token::semi);
 	}
 
-	void decls(parser::state_info* si)
+	void decls(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -716,7 +572,7 @@ namespace {
 
 
 
-	void entity(parser::state_info* si)
+	void entity(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 
@@ -725,7 +581,7 @@ namespace {
 		else
 			decls(si);
 	}
-	void entities(parser::state_info* si)
+	void entities(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
 

@@ -42,10 +42,14 @@
 <option id="gnu.cpp.link.option.paths.970119373" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/GenHelpers/Debug}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppParlexser/Debug}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parser/Debug}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Lexical Analyzer/Debug}&quot;"/>
 </option>
 <option id="gnu.cpp.link.option.libs.707160881" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="GenHelpers"/>
 <listOptionValue builtIn="false" value="Parlexser"/>
+<listOptionValue builtIn="false" value="Parser"/>
+<listOptionValue builtIn="false" value="LexicalAnalyzer"/>
+<listOptionValue builtIn="false" value="GenHelpers"/>
 </option>
 <option id="gnu.cpp.link.option.userobjs.1196605600" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
 <listOptionValue builtIn="false" value="/home/wmb001/lib/dbg.o"/>

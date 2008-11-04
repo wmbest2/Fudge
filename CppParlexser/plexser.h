@@ -54,7 +54,7 @@ private:
 	void eatWhiteSpace();
 	void eatComments();
 	void NonGenerated(char first);
-	void buildFuncHeader(char first);
+	void buildFuncHeader(char first, std::string cur);
 	void postProcess();
 
 	bool checkTripleOp(char first);
@@ -63,6 +63,7 @@ private:
 
 	char getChar();
 
+	std::pair<std::string, char> nextToken(char first);
 	cpptoken buildType(char first);
 	cpptoken buildIdent(char first);
 	cpptoken buildParamList(char first);

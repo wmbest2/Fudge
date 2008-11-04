@@ -12,10 +12,10 @@ using ::myclass;
 
 void myclass::func1(){
 
-
+testing 123
 }
 
-int myclass::func2(){
+const std::string& myclass::func2(){
 
 
 }

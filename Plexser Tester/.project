@@ -4,6 +4,9 @@
 	<comment></comment>
 	<projects>
 		<project>CppParlexser</project>
+		<project>GenHelpers</project>
+		<project>Lexical Analyzer</project>
+		<project>Parser</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

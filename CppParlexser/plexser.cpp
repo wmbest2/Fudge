@@ -82,6 +82,7 @@ bool plexser::find(const std::string& txt_to_find, int start, const std::string&
 void plexser::tokenize()
 {
 	char current;
+
 	input->seekg(0);
 	lineNum = 1;
 	columnNum = 1;
@@ -91,7 +92,7 @@ void plexser::tokenize()
 		//std::cout << "HERE" << std::endl;
 		//std::cout << current << std::endl;
 
-		/*if(isspace(current))
+		if(isspace(current))
 		{
 			eatWhiteSpace();
 		}
@@ -99,17 +100,28 @@ void plexser::tokenize()
 		{
 			eatComments();
 		}
-		else */
-		if(state == plexser::skiptogen)
-		{
-			NonGenerated(current);
-		}
-		else if(state == plexser::funcheader)
-		{
-			buildFuncHeader(current);
-		}
+		else
+			if(state == plexser::skiptogen)
+			{
+				NonGenerated(current);
+
+			}
+			else if(state == plexser::funcheader)
+			{
+
+				std::string current_token = nextToken(current).first;
+				current = getChar();
+				if(current_token == "using")
+				{
+
+					nextToken(current);
+				}
+				else
+					buildFuncHeader(current, current_token);
+			}
 
 		current = getChar();
+
 
 	}
 
@@ -169,8 +181,73 @@ void plexser::NonGenerated(char first)
 
 }
 
-void plexser::buildFuncHeader(char first)
+void plexser::buildFuncHeader(char first, std::string cur)
 {
+	std::pair<std::string, char> next = nextToken(first);
+	if(cur == "const")
+	{
+		std::cout << cur << std::endl;
+		cur = next.first;
+		std::cout << "return: " << cur << std::endl;
+
+		first = getChar();
+
+
+
+		next = nextToken(first);
+		cur = next.first;
+		std::cout << "ident: " << cur << std::endl;
+
+	}
+	else
+	{
+		std::cout << "return: " << cur << std::endl;
+
+		first = getChar();
+
+		cur = next.first;
+		std::cout << "ident: " << cur << std::endl;
+	}
+	next = nextToken(first);
+	first = getChar();
+	std::cout << "HERE: " << next.second << std::endl;
+	while(next.second == '(' || next.second == ',')
+	{
+		if(cur == "const")
+		{
+			next = nextToken(first);
+			cur = next.first;
+			first = getChar();
+
+			next = nextToken(first);
+			cur = next.first;
+		}
+		else
+		{
+			next = nextToken(first);
+			cur = next.first;
+		}
+		first = getChar();
+		next = nextToken(first);
+		cur = next.first;
+		first = getChar();
+	}
+
+	next = nextToken(first);
+	std::cout << "HERE:: " << next.second<< std::endl;
+	std::string body = "";
+	if(next.second == '{')
+	{
+		first = input->get();
+		while(first != '}')
+		{
+			body += first;
+			first = input->get();
+		}
+	}
+
+	std::cout << "body:" << std::endl << body << std::endl;
+
 
 }
 
@@ -275,6 +352,20 @@ char plexser::getChar()
 	}
 	return -1;
 
+}
+
+std::pair<std::string, char> plexser::nextToken(char first)
+{
+	eatWhiteSpace();
+	std::string token;
+	while(!input->eof() && (first != '(' && !isspace(first) && first != ')' && first != '{' && first != ';' && first != ','))
+	{
+		token += first;
+		first = getChar();
+	}
+
+	std::pair<std::string, char> p(token, first);
+	return p;
 }
 
 bool plexser::checkTripleOp(char first)

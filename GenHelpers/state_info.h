@@ -9,6 +9,7 @@
 #define STATE_INFO_H_
 
 #include <stack>
+#include "lexer.h"
 #include "token.h"
 #include "stackable.h"
 
@@ -39,7 +40,6 @@ struct state_info
 	template<typename T>
 	T* getStack()
 	{
-		std::cout << "JHHSKAAFJS" << std::endl;
 		stackitem<T>* tmp = dynamic_cast<stackitem<T>*>(obj_stack.top());
 		return (T*)tmp->getcur();
 	}

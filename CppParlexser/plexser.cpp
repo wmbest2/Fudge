@@ -45,38 +45,9 @@ std::string plexser::getFileName()
 	return filename;
 }
 
-int plexser::getSize()
+cppclass& plexser::getClass(const std::string& name)
 {
-	return (int)cpptokens.size();
-}
-
-cpptoken plexser::get_token(unsigned int i)
-{
-
-	if(i >= 0 && i < cpptokens.size())
-		return cpptokens[i];
-	else
-	{
-		cpptoken newtok(cpptoken::invalid, "INVALID", -1, -1);
-		return newtok;
-	}
-}
-
-bool plexser::find(const std::string& txt_to_find, int start, const std::string& terminator)
-{
-	cpptoken newtok(cpptoken::invalid, "INVALID", -1, -1);
-	int count = 0;
-	while(newtok.text() != terminator)
-	{
-		if(get_token(start + count).text() == txt_to_find)
-		{
-			return true;
-		}
-
-		++count;
-	}
-
-	return false;
+	std::map<std::string, cppclass>::iterator it = classes.find(name);
 }
 
 void plexser::tokenize()
@@ -114,14 +85,14 @@ void plexser::tokenize()
 				if(current_token == "using")
 				{
 					// create namespace and class object
-					std::string ns_and_class = nextToken(current);
-				std::string::size_type pos ns_and_class.find("::", 0);
+					std::string ns_and_class = nextToken(current).first;
+				std::string::size_type pos = ns_and_class.find("::", 0);
 					if(pos != std::string::npos)
 					{
 						std::string ns = ns_and_class.substr(0, pos);
-						std::string cls = ns_and_class.substr(ns+2, ns_and_class.size());
+						std::string cls = ns_and_class.substr(ns.size()+2, ns_and_class.size());
 
-						getClass()
+						getClass(cls);
 					}
 				}
 				else
@@ -184,8 +155,6 @@ void plexser::NonGenerated(char first)
 
 	}
 
-	cpptoken newToken(cpptoken::cppjunk, junk, line, col);
-	cpptokens.push_back(newToken);
 
 }
 
@@ -376,31 +345,6 @@ std::pair<std::string, char> plexser::nextToken(char first)
 	return p;
 }
 
-bool plexser::checkTripleOp(char first)
-{
-	std::string tokinquest;
-	tokinquest = first;
-	tokinquest += input->get();
-	tokinquest += input->peek();
-
-	input->unget();
-	return opers.find(tokinquest) != opers.end();
-}
-
-bool plexser::checkDoubleOp(char first)
-{
-	std::string tokinquest;
-	tokinquest = first;
-	tokinquest += input->peek();
-	return opers.find(tokinquest) != opers.end();
-}
-
-bool plexser::checkSingleOp(char first)
-{
-	std::string tokinquest;
-	tokinquest = first;
-	return opers.find(tokinquest) != opers.end();
-}
 
 /*cpptoken plexser::buildString()
 {
@@ -544,10 +488,5 @@ cpptoken plexser::buildSingleOp(char first)
 	newToken.column(columnNum - 1);
 	return newToken;
 }*/
-
-void plexser::handleException(cpptoken problem)
-{
-	//std::cout << "********** line "  << problem.line() << " column " << problem.column() << ": \'" << problem.text() << "\'" << std::endl;
-}
 
 

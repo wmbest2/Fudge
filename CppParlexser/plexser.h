@@ -8,14 +8,16 @@
 #ifndef PLEXSER_H_
 #define PLEXSER_H_
 
-#include "state_info.h"
 #include <cctype>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <map>
+#include "cppnamespace.h"
+#include "cppclass.h"
 #include "cpptoken.h"
+
 
 class plexser {
 	enum PLEXSTATE
@@ -35,16 +37,12 @@ public:
 
 	void setFstream(const std::string& file);
 
-	cpptoken get_token(unsigned int i);
 
 	std::string getFileName();
 
-	int getSize();
 	//const std::string& typetostring(TOKENTYPE t);
 
 	void tokenize();
-
-	bool find(const std::string& txt_to_find, int start, const std::string& terminator);
 
 
 
@@ -58,25 +56,13 @@ private:
 	void buildFuncHeader(char first, std::string cur);
 	void postProcess();
 
-	bool checkTripleOp(char first);
-	bool checkDoubleOp(char first);
-	bool checkSingleOp(char first);
-
 	char getChar();
+	cppclass& getClass(const std::string& name);
 
 	std::pair<std::string, char> nextToken(char first);
-	cpptoken buildType(char first);
-	cpptoken buildIdent(char first);
-	cpptoken buildParamList(char first);
-	cpptoken buildParam(char first);
-	cpptoken buildFunctionBody(char first);
-
-	void handleException(cpptoken problem);
 
 	std::ifstream* input;
 	std::map<std::string, cppclass> classes;
-
-	state_info* si;
 
 	std::string filename;
 

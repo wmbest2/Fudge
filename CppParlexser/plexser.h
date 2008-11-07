@@ -8,6 +8,7 @@
 #ifndef PLEXSER_H_
 #define PLEXSER_H_
 
+#include "state_info.h"
 #include <cctype>
 #include <iostream>
 #include <fstream>
@@ -73,10 +74,9 @@ private:
 	void handleException(cpptoken problem);
 
 	std::ifstream* input;
-	std::vector<cpptoken> cpptokens;
-	std::map<std::string, cpptoken> keys;
-	std::map<std::string, cpptoken> opers;
-	std::map<std::string, cpptoken> preprocs;
+	std::map<std::string, cppclass> classes;
+
+	state_info* si;
 
 	std::string filename;
 

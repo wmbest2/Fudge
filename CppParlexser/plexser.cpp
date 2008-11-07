@@ -113,8 +113,16 @@ void plexser::tokenize()
 				current = getChar();
 				if(current_token == "using")
 				{
+					// create namespace and class object
+					std::string ns_and_class = nextToken(current);
+				std::string::size_type pos ns_and_class.find("::", 0);
+					if(pos != std::string::npos)
+					{
+						std::string ns = ns_and_class.substr(0, pos);
+						std::string cls = ns_and_class.substr(ns+2, ns_and_class.size());
 
-					nextToken(current);
+						getClass()
+					}
 				}
 				else
 					buildFuncHeader(current, current_token);
@@ -211,7 +219,7 @@ void plexser::buildFuncHeader(char first, std::string cur)
 	next = nextToken(first);
 	first = getChar();
 	std::cout << "HERE: " << next.second << std::endl;
-	while(next.second == '(' || next.second == ',')
+	while(next.second == ' ' || next.second == ',')
 	{
 		if(cur == "const")
 		{

@@ -14,8 +14,8 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "cppnamespace.h"
-#include "cppclass.h"
+class cppnamespace;
+class cppclass;
 #include "cpptoken.h"
 
 

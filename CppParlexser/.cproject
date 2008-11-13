@@ -32,6 +32,9 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/GenHelpers}&quot;"/>
 <listOptionValue builtIn="false" value="/home/wmb001/include"/>
 </option>
+<option id="gnu.cpp.compiler.option.preprocessor.def.860696790" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="DBG_ENABLED"/>
+</option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.558165713" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug.495311248" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug">

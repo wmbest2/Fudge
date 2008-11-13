@@ -8,6 +8,17 @@
 #ifndef RESOLVER_H_
 #define RESOLVER_H_
 
+#include <string>
+#include <vector>
+
+class cppclass;
+
+struct resolver_info
+{
+	std::vector<std::pair<std::string, int> > headers;
+	std::vector<std::string>  cheaders;
+};
+
 class resolver {
 public:
 	resolver();
@@ -16,18 +27,21 @@ public:
 	void makeMatches();
 	const std::vector<std::pair<int, int> >& getMatches();
 
-	//if cppindex = -1 empty body if no match made hide on output
+	//if cppindex = -1 empty body if cppindex = -2 hide on output
 	void setMatch(int hindex, int cppindex);
 
-
-	const std::vector<std::string>& getHFileHeaders();
-	const std::vector<std::string>& getCFileHeaders();
+	const resolver_info& getLists();
 	std::string getFunctionBody(int cppindex);
 
 private:
-	std::vector<std::pair<int, int> > matched;
-	std::vector<std::string> hfilenames;
-	std::vector<std::string> cfilenames;
+
+	void initialize();
+	resolver_info my_info;
+
+
+	std::vector<cppclass> header_classes;
+	std::vector<cppclass> cpp_classes;
+
 
 };
 

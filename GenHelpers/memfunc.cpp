@@ -26,10 +26,20 @@ void memfunc::setReturn(cpptype t)
 	return_type = t;
 }
 
+cpptype memfunc::getReturn()
+{
+	return return_type;
+}
+
 void memfunc::addParam(cppvar p)
 {
 	string_dirty = true;
 	params.push_back(p);
+}
+
+std::vector<cppvar> memfunc::getParams()
+{
+	return params;
 }
 
 void memfunc::setName(const std::string& s)
@@ -50,14 +60,12 @@ void memfunc::setClass(cppclass* c)
 	owner = c;
 }
 
-std::string memfunc::toString()
+std::string memfunc::toString() // returns the header string
 {
 	std::string out;
 	out += return_type.toString();
 	if(return_type.toString() != "")
 		out += " ";
-	out += owner->getQual();
-	out += "::";
 	out += name;
 	out += "(";
 
@@ -68,7 +76,7 @@ std::string memfunc::toString()
 			out += ", ";
 	}
 
-	out += "){\n\n\n}";
+	out += ")";
 
 	return out;
 }
@@ -98,4 +106,9 @@ std::string& memfunc::getString()
 	}
 
 	return output;
+}
+
+void memfunc::setBody(const std::string& s)
+{
+	function_body = s;
 }

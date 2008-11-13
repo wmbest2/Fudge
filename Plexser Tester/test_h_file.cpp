@@ -15,14 +15,14 @@ void myclass::func1(){
 testing 123
 }
 
-const std::string& myclass::func2(){
+const std::string& myclass::func2(int i, const std::string& p){
 
-
+swafsdfasdfa
 }
 
 double myclass::func3(double i){
 
-
+fgte
 }
 
 

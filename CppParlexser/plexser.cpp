@@ -5,6 +5,11 @@
  *      Author: wmb001
  */
 
+#include "cppnamespace.h"
+#include "cppclass.h"
+#include "memfunc.h"
+#include "cpptype.h"
+#include "cppvar.h"
 #include "plexser.h"
 
 
@@ -43,11 +48,6 @@ void plexser::setFstream(const std::string& file)
 std::string plexser::getFileName()
 {
 	return filename;
-}
-
-cppclass& plexser::getClass(const std::string& name)
-{
-	std::map<std::string, cppclass>::iterator it = classes.find(name);
 }
 
 void plexser::tokenize()
@@ -92,7 +92,9 @@ void plexser::tokenize()
 						std::string ns = ns_and_class.substr(0, pos);
 						std::string cls = ns_and_class.substr(ns.size()+2, ns_and_class.size());
 
-						getClass(cls);
+						cppnamespace nspace(ns);
+						getClass(cls).setNamespace(nspace);
+
 					}
 				}
 				else
@@ -161,71 +163,126 @@ void plexser::NonGenerated(char first)
 void plexser::buildFuncHeader(char first, std::string cur)
 {
 	std::pair<std::string, char> next = nextToken(first);
+
+	std::string cls;
+	memfunc mem;
+	cpptype t;
 	if(cur == "const")
 	{
-		std::cout << cur << std::endl;
-		cur = next.first;
-		std::cout << "return: " << cur << std::endl;
 
+		t.setConst(true);
+		//std::cout << cur << std::endl;
+		cur = next.first;
+		//std::cout << "return: " << cur << std::endl;
+		t.addQual(cur);
+		mem.setReturn(t);
 		first = getChar();
 
 
 
 		next = nextToken(first);
+		first = getChar();
 		cur = next.first;
-		std::cout << "ident: " << cur << std::endl;
+		//std::cout << "ident: " << cur << std::endl;
 
+		std::string::size_type pos = cur.find("::", 0);
+		if(pos != std::string::npos)
+		{
+			cls = cur.substr(0, pos);
+			std::string name = cur.substr(cls.size()+2, cur.size());
+
+			cppclass& curclass = getClass(cls);
+			mem.setName(name);
+
+		}
 	}
 	else
 	{
-		std::cout << "return: " << cur << std::endl;
-
+		//std::cout << "return: " << cur << std::endl;
+		t.addQual(cur);
+		mem.setReturn(t);
 		first = getChar();
 
 		cur = next.first;
-		std::cout << "ident: " << cur << std::endl;
+		//std::cout << "ident: " << cur << std::endl;
+
+		std::string::size_type pos = cur.find("::", 0);
+		if(pos != std::string::npos)
+		{
+			cls = cur.substr(0, pos);
+			std::string name = cur.substr(cls.size()+2, cur.size());
+
+
+			mem.setName(name);
+
+		}
 	}
 	next = nextToken(first);
-	first = getChar();
-	std::cout << "HERE: " << next.second << std::endl;
+	cur = next.first;
+	if(next.second != ' ' && next.second != ',')
+	{
+		first = getChar();
+		next = nextToken(first);
+	}
 	while(next.second == ' ' || next.second == ',')
 	{
+		first = getChar();
+		//std::cout << "HERE: " << next.first << std::endl;
+		cpptype ptype;
+		cppvar p;
 		if(cur == "const")
 		{
-			next = nextToken(first);
-			cur = next.first;
-			first = getChar();
+			ptype.setConst(true);
 
 			next = nextToken(first);
 			cur = next.first;
+			ptype.addQual(cur);
+			first = getChar();
+
 		}
 		else
 		{
-			next = nextToken(first);
-			cur = next.first;
+
+			ptype.addQual(cur);
+
 		}
+
+
+		next = nextToken(first);
+
+		cur = next.first;
+		//std::cout << "HERE--> " << next.first << std::endl;
+		p.setType(ptype);
+		p.setName(cur);
+		mem.addParam(p);
+		eatWhiteSpace();
 		first = getChar();
+
 		next = nextToken(first);
 		cur = next.first;
-		first = getChar();
+
 	}
 
-	next = nextToken(first);
-	std::cout << "HERE:: " << next.second<< std::endl;
+
+	//std::cout << "HERE:: " << next.second << std::endl;
 	std::string body = "";
+//std::cout << "body:" << std::endl;
+
 	if(next.second == '{')
 	{
 		first = input->get();
 		while(first != '}')
 		{
+			//std::cout << first;
 			body += first;
 			first = input->get();
 		}
 	}
 
-	std::cout << "body:" << std::endl << body << std::endl;
 
-
+	mem.setBody(body);
+	cppclass& curclass = getClass(cls);
+	curclass.addfunc(mem);
 }
 
 void plexser::eatWhiteSpace()
@@ -275,7 +332,11 @@ void plexser::eatComments()
 
 void plexser::postProcess()
 {
-
+	std::map<std::string, cppclass>::iterator i;
+	for(i = classes.begin(); i != classes.end(); ++i)
+	{
+		i->second.print();
+	}
 }
 
 
@@ -345,6 +406,17 @@ std::pair<std::string, char> plexser::nextToken(char first)
 	return p;
 }
 
+cppclass& plexser::getClass(const std::string& name)
+{
+	if(classes.find(name) == classes.end())
+	{
+		cppclass c;
+		c.setname(name);
+		classes[name] = c;
+	}
+
+	return classes[name];
+}
 
 /*cpptoken plexser::buildString()
 {

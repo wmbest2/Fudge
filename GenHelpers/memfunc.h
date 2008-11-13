@@ -25,7 +25,11 @@ public:
 
 	void setReturn(cpptype t);
 
+	cpptype getReturn();
+
 	void addParam(cppvar p);
+
+	std::vector<cppvar> getParams();
 
 	void setName(const std::string& s);
 	std::string getName();
@@ -33,6 +37,8 @@ public:
 	void setClass(cppclass* c);
 
 	void setBody(const std::string& s);
+
+	void setConst(bool c);
 
 	std::string toString();
 

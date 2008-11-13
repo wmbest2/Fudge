@@ -46,6 +46,11 @@ void cppclass::setNamespace(cppnamespace n)
 	owner = n;
 }
 
+const std::vector<memfunc>& cppclass::get_funcs()
+{
+	return functions;
+}
+
 cppnamespace cppclass::getNamespace()
 {
 	return owner;

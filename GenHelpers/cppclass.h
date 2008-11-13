@@ -28,6 +28,7 @@ public:
 	void addbaseclass(const std::string& access, const std::string& ident);
 	void setname(const std::string& ident);
 	void setNamespace(cppnamespace n);
+	const std::vector<memfunc>& get_funcs();
 	cppnamespace getNamespace();
 	std::string getName();
 	std::string getQual();

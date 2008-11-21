@@ -1,0 +1,44 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+class GenGUI {open
+} {
+  Function {layout()} {open
+  } {
+    Fl_Window {} {
+      label {LVCpp Generator}
+      xywh {41 79 910 620} type Double hide
+    } {
+      Fl_Check_Browser header_browser {
+        xywh {10 10 890 355}
+      }
+      Fl_Browser cppheaders {
+        xywh {12 383 429 215}
+      }
+      Fl_Text_Display cppbody {
+        xywh {455 385 440 210}
+      }
+      Fl_Button preview_button {
+        label Generate
+        xywh {770 595 120 25}
+      }
+    }
+    Fl_Window output_window {
+      label Output
+      xywh {121 50 665 685} type Double color 55 hide
+    } {
+      Fl_Text_Display output_text {
+        xywh {15 10 635 625} box FLAT_BOX
+      }
+      Fl_Button save_button {
+        label Save
+        xywh {424 643 115 40}
+      }
+      Fl_Button cancel_button {
+        label Cancel selected
+        xywh {544 643 115 40}
+      }
+    }
+  }
+} 

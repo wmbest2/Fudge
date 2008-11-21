@@ -18,6 +18,7 @@ public:
 	cppvar(cpptype t, std::string i, std::string iv);
 
 	void setType(cpptype t);
+	cpptype getType() const;
 
 	void setName(std::string i);
 	std::string getName();

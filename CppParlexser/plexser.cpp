@@ -52,6 +52,7 @@ std::string plexser::getFileName()
 
 void plexser::tokenize()
 {
+	dbg::trace tr("plexser", DBG_HERE);
 	char current;
 
 	input->seekg(0);
@@ -75,14 +76,13 @@ void plexser::tokenize()
 			if(state == plexser::skiptogen)
 			{
 				NonGenerated(current);
-
 			}
 			else if(state == plexser::funcheader)
 			{
 
-				std::string current_token = nextToken(current).first;
+				std::pair<std::string, char> current_token = nextToken(current);
 				current = getChar();
-				if(current_token == "using")
+				if(current_token.first == "using")
 				{
 					// create namespace and class object
 					std::string ns_and_class = nextToken(current).first;
@@ -112,6 +112,7 @@ void plexser::tokenize()
 
 void plexser::NonGenerated(char first)
 {
+	dbg::trace tr("plexser", DBG_HERE);
 	int line = lineNum;
 	int col = columnNum;
 	std::string junk, comment;
@@ -160,36 +161,37 @@ void plexser::NonGenerated(char first)
 
 }
 
-void plexser::buildFuncHeader(char first, std::string cur)
+void plexser::buildFuncHeader(char first, std::pair<std::string, char> cur)
 {
-	std::pair<std::string, char> next = nextToken(first);
+	dbg::trace tr("plexser", DBG_HERE);
 
 	std::string cls;
 	memfunc mem;
 	cpptype t;
-	if(cur == "const")
+	dbg::out(dbg::info, "plexser") << dbg::indent() << cur.first << std::endl;
+	if(cur.first == "const")
 	{
 
 		t.setConst(true);
 		//std::cout << cur << std::endl;
-		cur = next.first;
 		//std::cout << "return: " << cur << std::endl;
-		t.addQual(cur);
+		//first = getChar();
+		cur = nextToken(first);
+		t.addQual(cur.first);
 		mem.setReturn(t);
 		first = getChar();
 
 
 
-		next = nextToken(first);
+		cur = nextToken(first);
 		first = getChar();
-		cur = next.first;
 		//std::cout << "ident: " << cur << std::endl;
 
-		std::string::size_type pos = cur.find("::", 0);
+		std::string::size_type pos = cur.first.find("::", 0);
 		if(pos != std::string::npos)
 		{
-			cls = cur.substr(0, pos);
-			std::string name = cur.substr(cls.size()+2, cur.size());
+			cls = cur.first.substr(0, pos);
+			std::string name = cur.first.substr(cls.size()+2, cur.first.size());
 
 			cppclass& curclass = getClass(cls);
 			mem.setName(name);
@@ -199,67 +201,87 @@ void plexser::buildFuncHeader(char first, std::string cur)
 	else
 	{
 		//std::cout << "return: " << cur << std::endl;
-		t.addQual(cur);
-		mem.setReturn(t);
-		first = getChar();
-
-		cur = next.first;
-		//std::cout << "ident: " << cur << std::endl;
-
-		std::string::size_type pos = cur.find("::", 0);
-		if(pos != std::string::npos)
+		dbg::out(dbg::info, "plexser") << dbg::indent() << cur.second << std::endl;
+		if(cur.second != '(')
 		{
-			cls = cur.substr(0, pos);
-			std::string name = cur.substr(cls.size()+2, cur.size());
+			t.addQual(cur.first);
+			mem.setReturn(t);
+			//first = getChar();
+			cur = nextToken(first);
+			first = getChar();
+			std::cout << "ident: " << cur.first << std::endl;
+
+			std::string::size_type pos = cur.first.find("::", 0);
+			if(pos != std::string::npos)
+			{
+				cls = cur.first.substr(0, pos);
+				std::string name = cur.first.substr(cls.size()+2, cur.first.size());
 
 
-			mem.setName(name);
+				mem.setName(name);
 
+			}
+		}
+		else // Constructor or Deconstructor
+		{
+			std::string::size_type pos = cur.first.find("::", 0);
+			if(pos != std::string::npos)
+			{
+				cls = cur.first.substr(0, pos);
+				std::string name = cur.first.substr(cls.size()+2, cur.first.size());
+
+				dbg::out(dbg::info, "plexser") << dbg::indent() << name << std::endl;
+
+				mem.setName(name);
+
+			}
 		}
 	}
-	next = nextToken(first);
-	cur = next.first;
-	if(next.second != ' ' && next.second != ',')
+	cur = nextToken(first);
+	std::cout << cur.second <<std::endl;
+	if(cur.second != ' ' && cur.second != ',')
 	{
+
 		first = getChar();
-		next = nextToken(first);
+		cur = nextToken(first);
 	}
-	while(next.second == ' ' || next.second == ',')
+	while(cur.second == ' ' || cur.second == ',')
 	{
 		first = getChar();
-		//std::cout << "HERE: " << next.first << std::endl;
+		std::cout << "HERE: " << cur.first << std::endl;
 		cpptype ptype;
 		cppvar p;
-		if(cur == "const")
+		if(cur.first == "const")
 		{
 			ptype.setConst(true);
 
-			next = nextToken(first);
-			cur = next.first;
-			ptype.addQual(cur);
+			cur = nextToken(first);
+			std::cout << "HERE1: " << cur.first << std::endl;
+			ptype.addQual(cur.first);
+
 			first = getChar();
 
 		}
 		else
 		{
 
-			ptype.addQual(cur);
+			ptype.addQual(cur.first);
 
 		}
 
 
-		next = nextToken(first);
+		cur = nextToken(first);
 
-		cur = next.first;
-		//std::cout << "HERE--> " << next.first << std::endl;
+		std::cout << "HERE--> " << cur.first << std::endl;
 		p.setType(ptype);
-		p.setName(cur);
+		p.setName(cur.first);
+
 		mem.addParam(p);
 		eatWhiteSpace();
 		first = getChar();
 
-		next = nextToken(first);
-		cur = next.first;
+		cur = nextToken(first);
+
 
 	}
 
@@ -268,16 +290,38 @@ void plexser::buildFuncHeader(char first, std::string cur)
 	std::string body = "";
 //std::cout << "body:" << std::endl;
 
-	if(next.second == '{')
+	if(cur.first == "const")
 	{
-		first = input->get();
-		while(first != '}')
-		{
-			//std::cout << first;
-			body += first;
-			first = input->get();
-		}
+		mem.setConst(true);
 	}
+
+	first = input->get();
+	//std::cout << first << std::endl;
+	body += cur.first;
+	bool has_body = false;
+	int curly_count = 0;
+	if(cur.second == '{')
+	{
+		++curly_count;
+		has_body = true;
+	}
+	while(curly_count != 0 || !has_body)
+	{
+		if(first == '{')
+		{
+			++curly_count;
+			has_body = true;
+		}
+		else if(first == '}')
+			--curly_count;
+		//std::cout << first;
+		body += first;
+		first = input->get();
+	}
+	std::cout << "Body:\n" << body << std::endl;
+
+
+
 
 
 	mem.setBody(body);
@@ -416,6 +460,17 @@ cppclass& plexser::getClass(const std::string& name)
 	}
 
 	return classes[name];
+}
+
+std::vector<cppclass> plexser::getClasses()
+{
+	std::vector<cppclass> cls;
+	std::map<std::string, cppclass>::iterator iter = classes.begin();
+	for(;iter != classes.end(); ++iter)
+	{
+		cls.push_back(iter->second);
+	}
+	return cls;
 }
 
 /*cpptoken plexser::buildString()

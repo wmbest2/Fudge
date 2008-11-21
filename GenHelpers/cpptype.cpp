@@ -13,6 +13,23 @@ cpptype::cpptype()
 
 }
 
+bool cpptype::operator==(cpptype rhs)
+{
+	if(getConst() == rhs.getConst())
+	{
+		std::string lhss, rhss;
+		for(int i = 0; i < qual_list.size(); ++i)
+					lhss += qual_list[i];
+
+		for(int i = 0; i < rhs.qual_list.size(); ++i)
+			rhss += rhs.qual_list[i];
+
+		if(lhss == rhss)
+			return true;
+	}
+	return false;
+}
+
 void cpptype::addQual(std::string q)
 {
 	dbg::trace tr("cpptype", DBG_HERE);

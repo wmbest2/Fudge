@@ -602,3 +602,20 @@ void parser::inclfile()
 	//std::cout << "inclfile" << std::endl;
 	entities(si);
 }
+
+
+std::vector<cppclass> parser::getClasses()
+{
+	std::vector<cppclass> cls;
+
+	std::vector<ref*> refs = (si->getStack<cppclass>())->cppOutput();
+	si->popStack();
+
+	for(int i = 0; i < refs.size(); ++i)
+	{
+		cls.push_back(*(cppclass*)(refs[i]));
+	}
+
+	return cls;
+
+}

@@ -24,6 +24,11 @@ void cppvar::setType(cpptype t)
 	type = t;
 }
 
+cpptype cppvar::getType() const
+{
+	return type;
+}
+
 void cppvar::setName(std::string i)
 {
 	id = i;

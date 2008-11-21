@@ -10,6 +10,7 @@
 #include "cppclass.h"
 
 memfunc::memfunc()
+	:is_const(false)
 {
 
 }
@@ -18,6 +19,30 @@ memfunc::memfunc(std::string n, bool v, bool c, bool p, bool s)
 	:name(n), is_virtual(v), is_const(c), is_pure(p), is_static(s),string_dirty(true)
 {
 
+}
+
+bool memfunc::operator==(const memfunc& rhs)
+{
+	if(name == rhs.name)
+	{
+		if(owner->getName() == rhs.owner->getName())
+		{
+			if(params.size() == rhs.params.size())
+			{
+				for(int i = 0; i < params.size(); ++i)
+				{
+					if(!(params[i].getType() == rhs.params[i].getType()))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void memfunc::setReturn(cpptype t)
@@ -78,6 +103,9 @@ std::string memfunc::toString() // returns the header string
 
 	out += ")";
 
+	if(is_const)
+		out += " const";
+
 	return out;
 }
 
@@ -106,6 +134,11 @@ std::string& memfunc::getString()
 	}
 
 	return output;
+}
+
+void memfunc::setConst(bool c)
+{
+	is_const = c;
 }
 
 void memfunc::setBody(const std::string& s)

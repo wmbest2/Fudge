@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <dbg.h>
 
 class cppclass;
 
@@ -21,7 +22,7 @@ struct resolver_info
 
 class resolver {
 public:
-	resolver();
+	resolver(std::vector<cppclass> h, std::vector<cppclass> c);
 	virtual ~resolver();
 	//public interfaces
 	void makeMatches();
@@ -37,6 +38,7 @@ private:
 
 	void initialize();
 	resolver_info my_info;
+
 
 
 	std::vector<cppclass> header_classes;

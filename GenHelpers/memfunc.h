@@ -23,6 +23,9 @@ public:
 	memfunc();
 	memfunc(std::string n, bool v, bool c, bool p, bool s);
 
+	bool operator==(const memfunc& rhs);
+
+
 	void setReturn(cpptype t);
 
 	cpptype getReturn();

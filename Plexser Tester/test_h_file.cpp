@@ -20,7 +20,8 @@ const std::string& myclass::func2(int i, const std::string& p){
 swafsdfasdfa
 }
 
-double myclass::func3(double i){
+double myclass::func3(double i) const
+{
 
 fgte
 }

@@ -37,6 +37,7 @@ public:
 
 	void setFstream(const std::string& file);
 
+	std::vector<cppclass> getClasses();
 
 	std::string getFileName();
 
@@ -53,7 +54,7 @@ private:
 	void eatWhiteSpace();
 	void eatComments();
 	void NonGenerated(char first);
-	void buildFuncHeader(char first, std::string cur);
+	void buildFuncHeader(char first, std::pair<std::string, char> cur);
 	void postProcess();
 
 	char getChar();

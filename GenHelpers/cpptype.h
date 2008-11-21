@@ -17,6 +17,8 @@ class cpptype
 public:
 	cpptype();
 
+	bool operator==(cpptype rhs);
+
 	void addQual(std::string q);
 
 	std::string toString();

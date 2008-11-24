@@ -30,7 +30,7 @@ public:
 	void setNamespace(cppnamespace n);
 	const std::vector<memfunc>& get_funcs();
 	cppnamespace getNamespace();
-	std::string getName();
+	std::string getName() const;
 	std::string getQual();
 	void print();
 	const std::vector<ref*>& cppOutput();

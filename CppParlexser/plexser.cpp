@@ -293,11 +293,14 @@ void plexser::buildFuncHeader(char first, std::pair<std::string, char> cur)
 	if(cur.first == "const")
 	{
 		mem.setConst(true);
+		first = input->get();
+		cur = nextToken(first);
 	}
 
 	first = input->get();
 	//std::cout << first << std::endl;
 	body += cur.first;
+	body += cur.second;
 	bool has_body = false;
 	int curly_count = 0;
 	if(cur.second == '{')

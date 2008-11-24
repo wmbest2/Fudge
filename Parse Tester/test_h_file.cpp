@@ -14,12 +14,12 @@ using tokens::no_class;
 using tokens::second_class;
 
 
-const std::string& second_class::helloworld(int x, int y){
+const std :: string & second_class::helloworld(int x, int y){
 
 
 }
 
-int[] second_class::asdlfkjlsd(const double amp, sometype* should_crash){
+int [] second_class::asdlfkjlsd(const double amp, sometype * should_crash){
 
 
 }
@@ -28,12 +28,12 @@ int[] second_class::asdlfkjlsd(const double amp, sometype* should_crash){
 using tokens::my_class2;
 
 
-const std::string& my_class2::helloworld(int x, int y){
+const std :: string & my_class2::helloworld(int x, int y){
 
 
 }
 
-std::string my_class2::hieric(double amp, sometype should_crash){
+std :: string my_class2::hieric(double amp, sometype should_crash){
 
 
 }

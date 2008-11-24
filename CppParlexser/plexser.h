@@ -16,6 +16,7 @@
 #include <map>
 class cppnamespace;
 class cppclass;
+class memfunc;
 #include "cpptoken.h"
 
 
@@ -62,9 +63,7 @@ private:
 	 * Functions for breaking down a function
 	 */
 	//checks to see if there is a type followed by text(function name) if not it returns false
-	bool hasReturnType();
-	void setReturnType(memfunc& f);
-	void setName(memfunc& f);
+	void setFuncInfo(memfunc& f);
 	void setParamList(memfunc& f);
 	void setConst(memfunc& f);
 	void setBody(memfunc& f);

@@ -38,6 +38,7 @@ public:
 	std::string getName();
 
 	void setClass(cppclass* c);
+	cppclass* getClass();
 
 	void setBody(const std::string& s);
 

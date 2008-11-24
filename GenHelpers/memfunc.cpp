@@ -84,6 +84,10 @@ void memfunc::setClass(cppclass* c)
 	string_dirty = true;
 	owner = c;
 }
+cppclass* memfunc::getClass()
+{
+	return owner;
+}
 
 std::string memfunc::toString() // returns the header string
 {

@@ -57,6 +57,8 @@ std::string cpptype::toString()
 	for(int i = 0; i < qual_list.size(); ++i)
 	{
 		tot += qual_list[i];
+		if(i != qual_list.size() - 1)
+			tot += " ";
 	}
 
 	return tot;

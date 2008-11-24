@@ -31,7 +31,7 @@ void cppclass::addfunc(memfunc f)
 	functions.push_back(f);
 }
 
-void cppclass::addbaseclass(const std::string& access, const std::string& ident)
+void cppclass::addbaseclass(const std::string & access, const std::string& ident)
 {
 	dbg::trace tr("cppclass", DBG_HERE);
 	std::pair<std::string, std::string> p(access, ident);

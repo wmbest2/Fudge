@@ -80,6 +80,10 @@ void plexser::tokenize()
 			else if(state == plexser::funcheader)
 			{
 
+				input->unget();
+				std::streampos pos = input->tellg();
+				input->get();
+
 				std::pair<std::string, char> current_token = nextToken(current);
 				current = getChar();
 				if(current_token.first == "using")
@@ -98,7 +102,11 @@ void plexser::tokenize()
 					}
 				}
 				else
+				{
+					input->seekg(pos);
+					std::cout << "Peek: " << input->peek() << std::endl;
 					buildFuncHeader(current, current_token);
+				}
 			}
 
 		current = getChar();
@@ -167,169 +175,15 @@ void plexser::buildFuncHeader(char first, std::pair<std::string, char> cur)
 
 	std::string cls;
 	memfunc mem;
-	cpptype t;
-	dbg::out(dbg::info, "plexser") << dbg::indent() << cur.first << std::endl;
-	if(cur.first == "const")
-	{
 
-		t.setConst(true);
-		//std::cout << cur << std::endl;
-		//std::cout << "return: " << cur << std::endl;
-		//first = getChar();
-		cur = nextToken(first);
-		t.addQual(cur.first);
-		mem.setReturn(t);
-		first = getChar();
+	setFuncInfo(mem);
+
+	setParamList(mem);
+	setBody(mem);
 
 
-
-		cur = nextToken(first);
-		first = getChar();
-		//std::cout << "ident: " << cur << std::endl;
-
-		std::string::size_type pos = cur.first.find("::", 0);
-		if(pos != std::string::npos)
-		{
-			cls = cur.first.substr(0, pos);
-			std::string name = cur.first.substr(cls.size()+2, cur.first.size());
-
-			cppclass& curclass = getClass(cls);
-			mem.setName(name);
-
-		}
-	}
-	else
-	{
-		//std::cout << "return: " << cur << std::endl;
-		dbg::out(dbg::info, "plexser") << dbg::indent() << cur.second << std::endl;
-		if(cur.second != '(')
-		{
-			t.addQual(cur.first);
-			mem.setReturn(t);
-			//first = getChar();
-			cur = nextToken(first);
-			first = getChar();
-			std::cout << "ident: " << cur.first << std::endl;
-
-			std::string::size_type pos = cur.first.find("::", 0);
-			if(pos != std::string::npos)
-			{
-				cls = cur.first.substr(0, pos);
-				std::string name = cur.first.substr(cls.size()+2, cur.first.size());
-
-
-				mem.setName(name);
-
-			}
-		}
-		else // Constructor or Deconstructor
-		{
-			std::string::size_type pos = cur.first.find("::", 0);
-			if(pos != std::string::npos)
-			{
-				cls = cur.first.substr(0, pos);
-				std::string name = cur.first.substr(cls.size()+2, cur.first.size());
-
-				dbg::out(dbg::info, "plexser") << dbg::indent() << name << std::endl;
-
-				mem.setName(name);
-
-			}
-		}
-	}
-	cur = nextToken(first);
-	std::cout << cur.second <<std::endl;
-	if(cur.second != ' ' && cur.second != ',')
-	{
-
-		first = getChar();
-		cur = nextToken(first);
-	}
-	while(cur.second == ' ' || cur.second == ',')
-	{
-		first = getChar();
-		std::cout << "HERE: " << cur.first << std::endl;
-		cpptype ptype;
-		cppvar p;
-		if(cur.first == "const")
-		{
-			ptype.setConst(true);
-
-			cur = nextToken(first);
-			std::cout << "HERE1: " << cur.first << std::endl;
-			ptype.addQual(cur.first);
-
-			first = getChar();
-
-		}
-		else
-		{
-
-			ptype.addQual(cur.first);
-
-		}
-
-
-		cur = nextToken(first);
-
-		std::cout << "HERE--> " << cur.first << std::endl;
-		p.setType(ptype);
-		p.setName(cur.first);
-
-		mem.addParam(p);
-		eatWhiteSpace();
-		first = getChar();
-
-		cur = nextToken(first);
-
-
-	}
-
-
-	//std::cout << "HERE:: " << next.second << std::endl;
-	std::string body = "";
-//std::cout << "body:" << std::endl;
-
-	if(cur.first == "const")
-	{
-		mem.setConst(true);
-		first = input->get();
-		cur = nextToken(first);
-	}
-
-	first = input->get();
-	//std::cout << first << std::endl;
-	body += cur.first;
-	body += cur.second;
-	bool has_body = false;
-	int curly_count = 0;
-	if(cur.second == '{')
-	{
-		++curly_count;
-		has_body = true;
-	}
-	while(curly_count != 0 || !has_body)
-	{
-		if(first == '{')
-		{
-			++curly_count;
-			has_body = true;
-		}
-		else if(first == '}')
-			--curly_count;
-		//std::cout << first;
-		body += first;
-		first = input->get();
-	}
-	std::cout << "Body:\n" << body << std::endl;
-
-
-
-
-
-	mem.setBody(body);
-	cppclass& curclass = getClass(cls);
-	curclass.addfunc(mem);
+	cppclass* curclass = mem.getClass();
+	curclass->addfunc(mem);
 }
 
 void plexser::eatWhiteSpace()
@@ -476,147 +330,146 @@ std::vector<cppclass> plexser::getClasses()
 	return cls;
 }
 
-/*cpptoken plexser::buildString()
+/**
+ * This function will be guaranteed to start at the beginning of a function
+ * it will then grab everything up to the parenthesis and make sense of it
+ * ie return type and function name
+ * it will leave the cursor right after the parenthesis
+ */
+void plexser::setFuncInfo(memfunc& f)
 {
-
-	std::string tok;
-	tok += '"';
-	char tmp = getChar();
-	while(tmp != '"' && !input->eof())
+	dbg::trace tr("plexser", DBG_HERE);
+	std::vector<std::string> tokens;
+	char curChar = input->get();
+	while(curChar != '(')
 	{
-		tok += tmp;
-		tmp = getChar();
-	}
-	tok += tmp;
-	//std::cout <<  "string: " << tok << std::endl;
-	cpptoken newToken(cpptoken::stringliteral, tok, lineNum, columnNum);
-	return newToken;
-}
 
-cpptoken plexser::buildChar()
-{
-	std::string tok = "'";
-	char tmp = getChar();
-	tok += tmp;
-
-	//escaped characters
-	if(tmp == '\\')
-	{
-		tmp = getChar();
-		tok += tmp;
-	}
-
-	// get other '
-	tmp = getChar();
-	tok += tmp;
-	//std::cout << tok << std::endl;
-	cpptoken newToken(cpptoken::charliteral, tok, lineNum, columnNum);
-	return newToken;
-}
-
-cpptoken plexser::buildKeyOrID(char first)
-{
-	std::string tok;
-	tok += first;
-	char current = input->peek();
-	while((isalnum(current) || current == '_') && !input->eof())
-	{
-		getChar();
-		tok += current;
-		current = input->peek();
-	}
-
-	//std::cout << tok << std::endl;
-
-	cpptoken::TOKENTYPE cpptokenID;
-	if(keys.find(tok) != keys.end())
-		cpptokenID = keys[tok].type();
-	else
-		cpptokenID = cpptoken::identifier;
-
-	cpptoken newToken(cpptokenID, tok, lineNum, columnNum - tok.size());
-	return newToken;
-
-}
-
-cpptoken plexser::buildPreProcDir(char first)
-{
-	cpptoken pptok = buildKeyOrID(first);
-	//if(pptok.type() == cpptoken::identifier) // not needed because "if" is a keyword and a pp directive
-	{
-		if(preprocs.find(pptok.text()) != preprocs.end())
+		std::string token;
+		while(!isspace(curChar) && curChar != '(')
 		{
-			pptok.type(preprocs[pptok.text()].type());
-			//std::cout << pptok.text() << std::endl;
-			return pptok;
+				token += curChar;
+				curChar = input->get();
+		}
+		std::cout << "Token:  " << token << std::endl;
+
+		tokens.push_back(token);
+
+		if(curChar != '(')
+			curChar = input->get();
+	}
+
+	cpptype t;
+
+	for(int i = 0; i < tokens.size() - 1; ++i)
+	{
+		if(tokens[i] == "const")
+		{
+			t.setConst(true);
+		}
+		else
+		{
+			t.addQual(tokens[i]);
+		}
+	}
+
+	f.setReturn(t);
+
+	//the last token will contain the name of the  function along with the class
+	//other tokens are the return type
+	std::string::size_type pos = tokens[tokens.size() - 1].find("::", 0);
+	if(pos != std::string::npos)
+	{
+		std::string cls = tokens[tokens.size() - 1].substr(0, pos);
+		std::string name = tokens[tokens.size() - 1].substr(cls.size()+2, tokens[tokens.size() - 1].size());
+
+
+		f.setName(name);
+		f.setClass(&getClass(cls));
+
+	}
+}
+
+/**
+ * This is guarenteed to be called right after the right paren and leave the cursor after the left
+ */
+void plexser::setParamList(memfunc& f)
+{
+	dbg::trace tr("plexser", DBG_HERE);
+	char curChar = input->get();
+	while(curChar != ')')
+	{
+		std::vector<std::string> tokens;
+		while(curChar != ',' && curChar != ')')
+		{
+			std::string token;
+
+			while(!isspace(curChar) && curChar != ',' && curChar != ')')
+			{
+				token += curChar;
+				curChar = input->get();
+			}
+			std::cout << "Token: " << token << std::endl;
+			tokens.push_back(token);
+			if(curChar != ')' && curChar != ',')
+				curChar = input->get();
 		}
 
-	}
-	cpptoken invalid;
-	return invalid;
-}
+		cppvar v;
+		cpptype t;
 
-cpptoken plexser::buildNumber(char first)
-{
-	std::string tok;
-	tok += first;
-	char current = input->peek();
-
-	int periodcount = 0;
-	while((isdigit(current) || current == '.') && !input->eof())
-	{
-		getChar();
-		if(current == '.')
+		for(int i = 0; i < tokens.size() - 1; ++i)
 		{
-			if(periodcount == 0)
-				++periodcount;
+			if(tokens[i] == "const")
+			{
+				t.setConst(true);
+			}
 			else
 			{
-				cpptoken newToken(cpptoken::invalid, tok, lineNum, columnNum - tok.size());
-				handleException(newToken);
+				t.addQual(tokens[i]);
 			}
 		}
-		tok += current;
-		current = input->peek();
+
+		v.setName(tokens[tokens.size() - 1]);
+		v.setType(t);
+		f.addParam(v);
+		if(curChar != ')')
+			curChar = input->get();
 	}
-	//std::cout << tok << std::endl;
-	cpptoken newToken(cpptoken::number, tok, lineNum, columnNum - tok.size());
-	return newToken;
 }
 
-cpptoken plexser::buildTripleOp(char first)
+void setConst(memfunc& f);
+void plexser::setBody(memfunc& f)
 {
-	std::string tok;
-	tok = first;
-	tok += getChar();
-	tok += getChar();
-	cpptoken newToken = opers.find(tok)->second;
-	newToken.line(lineNum);
-	newToken.column(columnNum - 3);
-	return newToken;
+
+	//std::cout << "HERE:: " << next.second << std::endl;
+	std::string body = "";
+//std::cout << "body:" << std::endl;
+
+
+	char first = input->get();
+	//std::cout << first << std::endl;
+	bool has_body = false;
+	int curly_count = 0;
+
+	while(curly_count != 0 || !has_body)
+	{
+		if(first == '{')
+		{
+			++curly_count;
+			has_body = true;
+		}
+		else if(first == '}')
+			--curly_count;
+		//std::cout << first;
+		body += first;
+		first = input->get();
+	}
+	std::cout << "Body:\n" << body << std::endl;
+
+
+
+
+
+	f.setBody(body);
 }
-
-cpptoken plexser::buildDoubleOp(char first)
-{
-	std::string tok;
-	tok = first;
-	tok += getChar();
-	//std::cout << tok << std::endl;
-	cpptoken newToken = opers.find(tok)->second;
-	newToken.line(lineNum);
-	newToken.column(columnNum - 2);
-	return newToken;
-}
-
-cpptoken plexser::buildSingleOp(char first)
-{
-	std::string tok;
-	tok = first;
-	//std::cout << tok << std::endl;
-	cpptoken newToken = opers.find(tok)->second;
-	newToken.line(lineNum);
-	newToken.column(columnNum - 1);
-	return newToken;
-}*/
-
 

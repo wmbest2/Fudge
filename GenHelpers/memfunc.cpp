@@ -23,24 +23,24 @@ memfunc::memfunc(std::string n, bool v, bool c, bool p, bool s)
 
 bool memfunc::operator==(const memfunc& rhs)
 {
-	if(name == rhs.name)
-	{
-		if(owner->getName() == rhs.owner->getName())
-		{
-			if(params.size() == rhs.params.size())
-			{
-				for(int i = 0; i < params.size(); ++i)
-				{
-					if(!(params[i].getType() == rhs.params[i].getType()))
-					{
-						return false;
-					}
-				}
 
-				return true;
+	if ( (return_type == rhs.return_type)
+			&& (name == rhs.name)
+			&& (owner->getName() == rhs.owner->getName())
+			&& (params.size() == rhs.params.size()))
+	{
+		for(int i = 0; i < params.size(); ++i)
+		{
+			if(!(params[i].getType() == rhs.params[i].getType()))
+			{
+				return false;
 			}
 		}
+
+		return true;
 	}
+
+
 
 	return false;
 }
@@ -115,7 +115,7 @@ std::string memfunc::toString() // returns the header string
 
 std::string& memfunc::getString()
 {
-	std::cout << "HERE" << std::endl;
+
 	if(string_dirty)
 	{
 		output = return_type.toString();

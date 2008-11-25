@@ -104,7 +104,7 @@ void plexser::tokenize()
 				else
 				{
 					input->seekg(pos);
-					std::cout << "Peek: " << input->peek() << std::endl;
+					//std::cout << "Peek: " << input->peek() << std::endl;
 					buildFuncHeader(current, current_token);
 				}
 			}
@@ -319,13 +319,14 @@ cppclass& plexser::getClass(const std::string& name)
 	return classes[name];
 }
 
-std::vector<cppclass> plexser::getClasses()
+std::vector<cppclass>* plexser::getClasses()
 {
-	std::vector<cppclass> cls;
+	dbg::trace tr("plexser", DBG_HERE);
+	std::vector<cppclass>* cls = new std::vector<cppclass>();
 	std::map<std::string, cppclass>::iterator iter = classes.begin();
 	for(;iter != classes.end(); ++iter)
 	{
-		cls.push_back(iter->second);
+		cls->push_back(iter->second);
 	}
 	return cls;
 }
@@ -350,7 +351,7 @@ void plexser::setFuncInfo(memfunc& f)
 				token += curChar;
 				curChar = input->get();
 		}
-		std::cout << "Token:  " << token << std::endl;
+		//std::cout << "Token:  " << token << std::endl;
 
 		tokens.push_back(token);
 
@@ -408,7 +409,7 @@ void plexser::setParamList(memfunc& f)
 				token += curChar;
 				curChar = input->get();
 			}
-			std::cout << "Token: " << token << std::endl;
+			//std::cout << "Token: " << token << std::endl;
 			tokens.push_back(token);
 			if(curChar != ')' && curChar != ',')
 				curChar = input->get();
@@ -464,7 +465,7 @@ void plexser::setBody(memfunc& f)
 		body += first;
 		first = input->get();
 	}
-	std::cout << "Body:\n" << body << std::endl;
+	//std::cout << "Body:\n" << body << std::endl;
 
 
 

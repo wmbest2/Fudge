@@ -66,7 +66,7 @@ std::string cppclass::getQual()
 	return name;
 }
 
-std::string cppclass::getName() const
+std::string cppclass::getName()
 {
 	return name;
 }

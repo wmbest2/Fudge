@@ -12,10 +12,10 @@
 int main()
 {
 
-	dbg::enable(dbg::all, "plexser", true);
+	dbg::enable(dbg::all, "plexser", false);
 	dbg::attach_ostream(dbg::all, "plexser", std::cout);
 
-	dbg::enable(dbg::all, "parser_helpers", true);
+	dbg::enable(dbg::all, "parser_helpers", false);
 	dbg::attach_ostream(dbg::all, "parser_helpers", std::cout);
 	//lexer my_lexer("testhfile.h");
 	//my_lexer.tokenize();

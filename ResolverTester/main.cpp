@@ -21,9 +21,9 @@ int main()
 	dbg::attach_ostream(dbg::all, "parser_helpers", std::cout);
 
 	dbg::enable(dbg::all, "resolver", true);
-		dbg::attach_ostream(dbg::all, "resolver", std::cout);
-	//lexer my_lexer("testhfile.h");
-	//my_lexer.tokenize();
+	dbg::attach_ostream(dbg::all, "resolver", std::cout);
+
+
 	std::cout << "Before Parse" << std::endl;
 	parser my_parser("test_h_file.h");
 	my_parser.parse();
@@ -31,7 +31,8 @@ int main()
 	plexser my_plexser("test_h_file.cpp");
 	my_plexser.tokenize();
 	std::cout << "Before Resolve" << std::endl;
-	resolver my_resolver(my_parser.getClasses(), my_plexser.getClasses());
+	resolver my_resolver(&my_parser, &my_plexser);
+	my_resolver.makeMatches();
 	std::cout << "Done" << std::endl;
 	return 0;
 }

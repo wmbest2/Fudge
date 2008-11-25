@@ -36,7 +36,7 @@ public:
 
 	void parse();
 	void cppOutput(const std::string& filename);
-	std::vector<cppclass> getClasses();
+	std::vector<cppclass>* getClasses();
 
 
 

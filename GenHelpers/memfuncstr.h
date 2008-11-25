@@ -73,7 +73,7 @@ public:
 
 	virtual const std::string& toString()
 	{
-		std::cout << "toString " << func->getName() << std::endl;
+		//std::cout << "toString " << func->getName() << std::endl;
 		return func->getString();
 	}
 private:

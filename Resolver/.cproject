@@ -30,6 +30,8 @@
 <option id="gnu.cpp.compiler.lib.debug.option.debugging.level.1011315741" name="Debug Level" superClass="gnu.cpp.compiler.lib.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.115370333" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/GenHelpers}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppParlexser}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Parser}&quot;"/>
 <listOptionValue builtIn="false" value="/home/wmb001/include"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.def.1477989507" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">

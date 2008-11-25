@@ -12,6 +12,8 @@
 #include <vector>
 #include <dbg.h>
 
+class parser;
+class plexser;
 class cppclass;
 
 struct resolver_info
@@ -22,7 +24,7 @@ struct resolver_info
 
 class resolver {
 public:
-	resolver(std::vector<cppclass> h, std::vector<cppclass> c);
+	resolver(parser* h, plexser* c);
 	virtual ~resolver();
 	//public interfaces
 	void makeMatches();
@@ -39,10 +41,11 @@ private:
 	void initialize();
 	resolver_info my_info;
 
+	parser* parse;
+	plexser* plex;
 
-
-	std::vector<cppclass> header_classes;
-	std::vector<cppclass> cpp_classes;
+	std::vector<cppclass>* header_classes;
+	std::vector<cppclass>* cpp_classes;
 
 
 };

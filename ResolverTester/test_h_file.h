@@ -15,7 +15,7 @@ namespace {
 
 		void func1();
 
-		int func2();
+		double func2();
 
 		double func3(double i);
 	};

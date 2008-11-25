@@ -604,17 +604,24 @@ void parser::inclfile()
 }
 
 
-std::vector<cppclass> parser::getClasses()
+std::vector<cppclass>* parser::getClasses()
 {
-	std::vector<cppclass> cls;
+	dbg::trace tr("parser_helpers", DBG_HERE);
+	std::vector<cppclass>* cls = new std::vector<cppclass>();
+	//std::cout << "created new class list" << std::endl;
 
-	std::vector<ref*> refs = (si->getStack<cppclass>())->cppOutput();
-	si->popStack();
+	//std::cout << "Got list of refs" << std::endl;
 
-	for(int i = 0; i < refs.size(); ++i)
+
+
+	while(!(si->obj_stack.empty()))
 	{
-		cls.push_back(*(cppclass*)(refs[i]));
+		cppclass* c = si->getStack<cppclass>();
+		si->popStack();
+		//std::cout << c->getName() << std::endl;
+		cls->push_back(*c);
 	}
+
 
 	return cls;
 

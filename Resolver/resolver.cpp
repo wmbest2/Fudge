@@ -5,12 +5,14 @@
  *      Author: wmb001
  */
 
+#include "parser.h"
+#include "plexser.h"
 #include "cppclass.h"
 #include "memfunc.h"
 #include "resolver.h"
 
-resolver::resolver(std::vector<cppclass> h, std::vector<cppclass> c)
-	:header_classes(h), cpp_classes(c)
+resolver::resolver(parser* h, plexser* c)
+	:parse(h), plex(c)
 {
 	// TODO Auto-generated constructor stub
 	initialize();
@@ -22,18 +24,12 @@ resolver::~resolver() {
 
 void resolver::initialize()
 {
-	std::cout << "JHERE" << std::endl;
 	dbg::trace tr("resolver", DBG_HERE);
-	/*for(int i = 0; i < header_classes.size(); ++i)
-	{
-		const std::vector<memfunc>& h_funcs = headers_classes[i].get_funcs();
-
-	}
-
-	for(int j = 0; j < cpp_classes.size(); ++j)
-	{
-		const std::vector<memfunc>& cpp_funcs = headers_classes[i].get_funcs();
-	}*/
+	//std::cout << "HERE" << std::endl;
+	header_classes = parse->getClasses();
+	//std::cout << "HERE" << std::endl;
+	cpp_classes = plex->getClasses();
+	//std::cout << "HERE" << std::endl;
 }
 
 
@@ -41,33 +37,44 @@ void resolver::initialize()
 void resolver::makeMatches()
 {
 	dbg::trace tr("resolver", DBG_HERE);
-	for(int i = 0; i < header_classes.size(); ++i)
+	for(int i = 0; i < header_classes->size(); ++i)
 	{
-		for(int j = 0; j < cpp_classes.size(); ++j)
+		for(int j = 0; j < cpp_classes->size(); ++j)
 		{
-			if(header_classes[i].getName() == cpp_classes[j].getName())
+			if((*header_classes)[i].getName() == (*cpp_classes)[j].getName())
 			{
-				std::vector<memfunc> h_funcs = header_classes[i].get_funcs();
-				std::vector<memfunc> cpp_funcs = cpp_classes[j].get_funcs();
+				dbg::out(dbg::info, "resolver") << dbg::indent() << (*header_classes)[i].getName() << ":" << std::endl;
+
+				std::vector<memfunc> h_funcs = (*header_classes)[i].get_funcs();
+				std::vector<memfunc> cpp_funcs = (*cpp_classes)[j].get_funcs();
 				std::vector<int> used_cpps;
 				for(int k = 0; k < h_funcs.size(); ++k)
 				{
-					for(int l = 0; i < cpp_funcs.size(); ++l)
+					bool found = false;
+					for(int l = 0; l < cpp_funcs.size(); ++l)
 					{
+
 						if(h_funcs[k] == cpp_funcs[l])
 						{
 							std::pair<std::string, int> p(h_funcs[k].toString(), my_info.cheaders.size());
 							my_info.headers.push_back(p);
 							my_info.cheaders.push_back(cpp_funcs[l].toString());
+							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << h_funcs[k].toString() << std::endl;
+							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << "matches" << std::endl;
+							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << cpp_funcs[l].toString() << std::endl;
 							used_cpps.push_back(l);
+							found = true;
 							break;
 						}
-						else
-						{
-							std::pair<std::string, int> p(h_funcs[k].toString(), -1);
-							my_info.headers.push_back(p);
 
-						}
+					}
+
+					if(!found)
+					{
+						dbg::out(dbg::info, "resolver") << dbg::indent() << " No Match Found" << std::endl;
+						std::pair<std::string, int> p(h_funcs[k].toString(), -1);
+						my_info.headers.push_back(p);
+
 					}
 				}
 

@@ -14,31 +14,21 @@
 #include <vector>
 #include <string>
 #include <map>
-class cppnamespace;
-class cppclass;
-class memfunc;
+//class cppnamespace;
+//class cppclass;
+//class memfunc;
 #include "cpptoken.h"
 
 
 class plexser {
-	enum PLEXSTATE
-	{
-		skiptogen,
-		funcheader,
-		funcbody,
-	};
-
-	std::string GENCOMMENT;
 
 public:
 	plexser();
 	plexser(const std::string& file);
 	plexser(std::ifstream* i);
-	virtual ~plexser();
+
 
 	void setFstream(const std::string& file);
-
-	std::vector<cppclass>* getClasses();
 
 	std::string getFileName();
 
@@ -55,7 +45,6 @@ private:
 	void eatWhiteSpace();
 	void eatComments();
 	void NonGenerated(char first);
-	void buildFuncHeader(char first, std::pair<std::string, char> cur);
 	void postProcess();
 
 
@@ -73,17 +62,8 @@ private:
 	char getChar();
 	cppclass& getClass(const std::string& name);
 
-	std::pair<std::string, char> nextToken(char first);
 
-	std::ifstream* input;
-	std::map<std::string, cppclass> classes;
 
-	std::string filename;
-
-	int lineNum;
-	int columnNum;
-
-	PLEXSTATE state;
 };
 
 #endif /* PLEXSER_H_ */

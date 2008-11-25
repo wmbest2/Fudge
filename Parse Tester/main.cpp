@@ -22,8 +22,8 @@ int main()
 	//lexer my_lexer("testhfile.h");
 	//my_lexer.tokenize();
 
-	parser my_parser("testhfile.h");
+	parser my_parser("testhfile2.h");
 	my_parser.parse();
-	my_parser.cppOutput("test_h_file.cpp");
+	my_parser.cppOutput("test_h_file2.cpp");
 	return 0;
 }

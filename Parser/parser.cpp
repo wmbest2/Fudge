@@ -237,11 +237,32 @@ namespace {
 			ident(si);
 		}
 
-		while(si->matchType(token::amp) || si->matchType(token::ast) || si->matchType(token::lsquare))
+		while(si->matchType(token::amp) || si->matchType(token::ast) || si->matchType(token::lsquare) || si->matchType(token::less))
 		{
 			dbg::out(dbg::info, "parser_helpers") << dbg::indent() << "In qual loop" << std::endl;
 
-			if(si->matchType(token::amp))
+			if(si->matchType(token::less))
+			{
+				si->matchIncr(token::less);
+				t->addQual("<");
+				int great_countdown = 1;
+				while(great_countdown != 0)
+				{
+					if(si->matchType(token::less))
+					{
+						++great_countdown;
+					}
+					else if(si->matchType(token::great))
+					{
+						--great_countdown;
+					}
+
+					t->addQual(si->getCurrent().text());
+					si->matchIncr(si->getCurrent().type());
+
+				}
+			}
+			else if(si->matchType(token::amp))
 			{
 				si->matchIncr(token::amp);
 				t->addQual("&");
@@ -264,9 +285,7 @@ namespace {
 	void mvardecl(state_info* si)
 	{
 		dbg::trace tr("parser_helpers", DBG_HERE);
-
-		cpptype* t = (si->getStack<cpptype>());
-
+		si->popStack();
 		si->matchIncr(token::identifier);
 		si->matchIncr(token::semi);
 	}
@@ -351,6 +370,7 @@ namespace {
 
 	void mconstructdecl(state_info* si)
 	{
+		dbg::trace tr("parser_helpers", DBG_HERE);
 		memfunc* f = (si->getStack<memfunc>());
 
 		f->setName(si->getCurrent().text());
@@ -386,6 +406,29 @@ namespace {
 		}
 	}
 
+	void mdestructdecl(state_info* si)
+	{
+
+		dbg::trace tr("parser_helpers", DBG_HERE);
+		memfunc* f = (si->getStack<memfunc>());
+
+		f->setName("~" + si->getCurrent().text());
+		dbg::out(dbg::info, "parser_helpers") << dbg::indent() <<  si->getCurrent().text() << std::endl;
+		si->matchIncr(token::identifier);
+		si->matchIncr(token::lparen);
+		si->matchIncr(token::rparen);
+
+		if(si->matchType(token::semi))
+		{
+			si->matchIncr(token::semi);
+			dbg::out(dbg::info, "parser_helpers") << dbg::indent() <<  "STOP" << std::endl;
+		}
+		else if(si->matchType(token::lcurly)) //will handle inline functions
+		{
+			//mfuncbody         should we keep this as one unit or break it down  Its already going to be broken down but it is possible to skip everything
+		}
+	}
+
 
 
 	void mdecls(state_info* si)
@@ -395,6 +438,20 @@ namespace {
 		if(si->matchText("public") || si->matchText("private") || si->matchText("protected") )
 		{
 			 access_scope(si);
+		}
+		else if(si->matchText("enum"))
+		{
+			std::cout << "HERE:" << std::endl;
+			si->matchIncr(token::keyword);
+			si->matchIncr(token::identifier);
+			si->matchIncr(token::lcurly);
+			while(!si->matchType(token::rcurly))
+			{
+				si->matchIncr(si->getCurrent().type());
+			}
+			si->matchIncr(token::rcurly);
+			si->matchIncr(token::semi);
+
 		}
 		else if(si->matchType(token::lparen, 1))
 		{
@@ -409,37 +466,59 @@ namespace {
 			si->popStack();
 			si->getStack<cppclass>()->addfunc(*f);
 		}
-		else if(si->matchType(token::tilda))
-		{
-			//TODO Destructor
-		}
 		else
 		{
-			si->pushStack<cpptype>(new cpptype());
-			type(si);
-
-			if(si->matchType(token::lparen, 1))
+			bool is_virtual = false;
+			if(si->matchText("virtual"))
 			{
+				si->matchIncr(token::keyword);
+				is_virtual = true;
+			}
 
-				cpptype* t = (si->getStack<cpptype>());
-				si->popStack();
+
+			if(si->matchType(token::tilda))
+			{
 				si->pushStack<memfunc>(new memfunc());
-				si->getStack<memfunc>()->setReturn(*t);
+				si->matchIncr(token::tilda);
 
-				mfuncdecl(si);
+				mdestructdecl(si);
 
+				si->getStack<memfunc>()->setVirtual(is_virtual);
 				memfunc* f = (si->getStack<memfunc>());
+
 				si->popStack();
 				si->getStack<cppclass>()->addfunc(*f);
+
 			}
-			else if (si->matchType(token::semi, 1))
+			else
 			{
+				si->pushStack<cpptype>(new cpptype());
 
-				cpptype* t = (si->getStack<cpptype>());
-				si->popStack();
-				si->pushStack<cppvar>(new cppvar());
-				mvardecl(si);
+				type(si);
+				if(si->matchType(token::lparen, 1))
+				{
 
+					cpptype* t = (si->getStack<cpptype>());
+					si->popStack();
+					si->pushStack<memfunc>(new memfunc());
+					si->getStack<memfunc>()->setReturn(*t);
+
+					mfuncdecl(si);
+
+					memfunc* f = (si->getStack<memfunc>());
+					f->setVirtual(is_virtual);
+					si->popStack();
+					si->getStack<cppclass>()->addfunc(*f);
+				}
+				else if (si->matchType(token::semi, 1))
+				{
+
+					cpptype* t = (si->getStack<cpptype>());
+					si->popStack();
+					si->pushStack<cppvar>(new cppvar());
+					mvardecl(si);
+
+				}
 			}
 		}
 	}
@@ -550,9 +629,18 @@ namespace {
 			{
 				if(si->matchText("class") || si->matchText("struct"))
 				{
-					si->pushStack<cppclass>(new cppclass());
-					classdecl(si);
-					si->getStack<cppclass>()->print();
+					if(!(si->matchType(token::semi, 2)))
+					{
+						si->pushStack<cppclass>(new cppclass());
+						classdecl(si);
+						si->getStack<cppclass>()->print();
+					}
+					else
+					{
+						si->matchIncr(token::keyword);
+						si->matchIncr(token::identifier);
+						si->matchIncr(token::semi);
+					}
 				}
 				else if(si->matchText("namespace"))
 				{

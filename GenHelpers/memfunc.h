@@ -44,6 +44,8 @@ public:
 
 	void setConst(bool c);
 
+	void setVirtual(bool v);
+
 	std::string toString();
 
 	std::string& getString();

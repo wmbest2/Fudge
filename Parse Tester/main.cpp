@@ -22,7 +22,7 @@ int main()
 	//lexer my_lexer("testhfile.h");
 	//my_lexer.tokenize();
 
-	parser my_parser("testhfile2.h");
+	parser my_parser("../CppParlexser/plexser.h");
 	my_parser.parse();
 	my_parser.cppOutput("test_h_file2.cpp");
 	return 0;

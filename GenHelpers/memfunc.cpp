@@ -145,6 +145,11 @@ void memfunc::setConst(bool c)
 	is_const = c;
 }
 
+void memfunc::setVirtual(bool v)
+{
+	is_virtual = v;
+}
+
 void memfunc::setBody(const std::string& s)
 {
 	function_body = s;

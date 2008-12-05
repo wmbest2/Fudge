@@ -154,3 +154,8 @@ void memfunc::setBody(const std::string& s)
 {
 	function_body = s;
 }
+
+std::string memfunc::getBody()
+{
+	return function_body;
+}

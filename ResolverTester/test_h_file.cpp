@@ -28,8 +28,8 @@ int myclass::func2(){
 }
 
 double myclass::func3(double i){
-
-
+tewtsdasdfasdfasd
+asdfasdf
 }
 
 

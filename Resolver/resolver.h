@@ -19,7 +19,13 @@ class cppclass;
 struct resolver_info
 {
 	std::vector<std::pair<std::string, int> > headers;
-	std::vector<std::string>  cheaders;
+	std::vector<std::pair<std::string, std::string> >  cheaders;
+	std::vector<bool> cpp_used;
+};
+
+struct output_object
+{
+	std::vector <std::pair<std::string, std::string> > functions;
 };
 
 class resolver {
@@ -35,6 +41,8 @@ public:
 
 	const resolver_info& getLists();
 	std::string getFunctionBody(int cppindex);
+
+	output_object finalize();
 
 private:
 

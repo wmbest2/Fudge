@@ -41,6 +41,7 @@ public:
 	cppclass* getClass();
 
 	void setBody(const std::string& s);
+	std::string getBody();
 
 	void setConst(bool c);
 

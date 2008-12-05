@@ -47,6 +47,14 @@ void resolver::makeMatches()
 
 				std::vector<memfunc> h_funcs = (*header_classes)[i].get_funcs();
 				std::vector<memfunc> cpp_funcs = (*cpp_classes)[j].get_funcs();
+
+				for(int l = 0; l < cpp_funcs.size(); ++l)
+				{
+					std::pair<std::string, std::string> p(cpp_funcs[l].toString(), cpp_funcs[l].getBody());
+					my_info.cheaders.push_back(p);
+					my_info.cpp_used.push_back(false);
+				}
+
 				std::vector<int> used_cpps;
 				for(int k = 0; k < h_funcs.size(); ++k)
 				{
@@ -58,11 +66,10 @@ void resolver::makeMatches()
 						{
 							std::pair<std::string, int> p(h_funcs[k].toString(), my_info.cheaders.size());
 							my_info.headers.push_back(p);
-							my_info.cheaders.push_back(cpp_funcs[l].toString());
 							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << h_funcs[k].toString() << std::endl;
 							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << "matches" << std::endl;
 							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << cpp_funcs[l].toString() << std::endl;
-							used_cpps.push_back(l);
+							my_info.cpp_used[l] = true;
 							found = true;
 							break;
 						}
@@ -86,7 +93,13 @@ void resolver::makeMatches()
 //if cppindex = -1 empty body if cppindex = -2 hide on output
 void resolver::setMatch(int hindex, int cppindex)
 {
+	dbg::trace tr("resolver", DBG_HERE);
+	if(my_info.headers[hindex].second >=0 && my_info.headers[hindex].second < my_info.headers.size())
+		my_info.cpp_used[my_info.headers[hindex].second] = false;
 	my_info.headers[hindex].second = cppindex;
+	if(cppindex >= 0 && cppindex < my_info.cpp_used.size())
+		my_info.cpp_used[cppindex] = true;
+
 }
 
 const resolver_info& resolver::getLists()
@@ -96,4 +109,30 @@ const resolver_info& resolver::getLists()
 std::string resolver::getFunctionBody(int cppindex)
 {
 
+}
+
+output_object resolver::finalize()
+{
+	dbg::trace tr("resolver", DBG_HERE);
+	output_object o;
+	for(int i = 0; i < my_info.headers.size(); ++i)
+	{
+		if(my_info.headers[i].second != -2)
+		{
+
+			std::pair<std::string, std::string> p;
+			p.first = my_info.headers[i].first;
+
+			if(my_info.headers[i].second == -1)
+				p.second = "\n{\n\n\n}\n";
+			else
+				p.second = my_info.cheaders[i].second;
+
+			o.functions.push_back(p);
+		}
+
+
+
+	}
+	return o;
 }

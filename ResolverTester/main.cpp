@@ -25,22 +25,22 @@ int main()
 
 
 	std::cout << "Before Parse" << std::endl;
-	parser my_parser("test_h_file.h");
+	parser my_parser("../GenHelpers/cppclass.h");
 	my_parser.parse();
 	std::cout << "Before Plex" << std::endl;
-	plexser my_plexser("test_h_file.cpp");
+	plexser my_plexser("../GenHelpers/cppclass.cpp");
 	my_plexser.tokenize();
 	std::cout << "Before Resolve" << std::endl;
 	resolver my_resolver(&my_parser, &my_plexser);
 	my_resolver.makeMatches();
 	std::cout << "Before Match" << std::endl;
-	my_resolver.setMatch(2,-2);
+	//my_resolver.setMatch(2,-2);
 	std::cout << "Before Finalize" << std::endl;
 	output_object o = my_resolver.finalize();
 	std::cout << "Before Print" << std::endl;
 	for(int i = 0; i < o.functions.size(); ++i)
 	{
-		std::cout << o.functions[i].first << std::endl << o.functions[i].second << std::endl;
+		std::cout << o.functions[i].first << o.functions[i].second << std::endl;
 	}
 
 	std::cout << "Done" << std::endl;

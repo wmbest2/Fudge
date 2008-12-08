@@ -47,7 +47,7 @@ void resolver::makeMatches()
 
 				std::vector<memfunc> h_funcs = (*header_classes)[i].get_funcs();
 				std::vector<memfunc> cpp_funcs = (*cpp_classes)[j].get_funcs();
-
+				int offset = my_info.cheaders.size();
 				for(int l = 0; l < cpp_funcs.size(); ++l)
 				{
 					std::pair<std::string, std::string> p(cpp_funcs[l].toString(), cpp_funcs[l].getBody());
@@ -69,7 +69,7 @@ void resolver::makeMatches()
 							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << h_funcs[k].toString() << std::endl;
 							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << "matches" << std::endl;
 							dbg::out(dbg::info, "resolver") <<"**" << dbg::indent() << cpp_funcs[l].toString() << std::endl;
-							my_info.cpp_used[l] = true;
+							my_info.cpp_used[l + offset] = true;
 							found = true;
 							break;
 						}

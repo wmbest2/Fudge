@@ -21,6 +21,13 @@ lexer::lexer(const std::string& file)
 	:input(new std::ifstream()), state(lexer::normal), filename(file)
 {
 	input->open(filename.c_str());
+	if(!input)
+	{
+		std::cout << "Couldn't Find " << filename << std::endl;
+		file_not_found f;
+		f.file_name = filename;
+		throw f;
+	}
 	initializeKeywords();
 	initializeOperators();
 	initializePreProc();

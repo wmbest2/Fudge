@@ -15,6 +15,7 @@
 #include <string>
 #include <map>
 #include "token.h"
+#include "exceptions.h"
 
 class lexer {
 	enum LEXSTATE

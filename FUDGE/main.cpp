@@ -10,36 +10,44 @@
 #include "plexser.h"
 #include "resolver.h"
 #include <dbg.h>
+#include <boost/filesystem/operations.hpp>
 #include <sys/stat.h>
+#include <sstream>
 #include <exceptions.h>
+#include <cstring>
+
+namespace bfs = boost::filesystem;
 
 struct output_config
 {
 	void buildConfig(int argc, char* argv[])
 	{
 		hfile = argv[1];
+		std::cout << argc << std::endl;
 		for(int i = 2; i < argc; ++i)
 		{
-			if(argv[i] == "-e")
+			std::cout << argv[i] << std::endl;
+			if(strcmp(argv[i], "-e") == 0)
 			{
 				option = 'e';
 			}
-			else if(argv[i] == "-c")
+			else if(strcmp(argv[i], "-c") == 0)
 			{
 				option = 'c';
 			}
-			else if(argv[i] == "-m")
+			else if(strcmp(argv[i], "-m") == 0)
 			{
 				option = 'm';
 			}
-			else if(argv[i] == "-cpp")
+			else if(strcmp(argv[i], "-cpp") == 0)
 			{
 				++i;
 				cppfile = argv[i];
 			}
-			else if(argv[i] == "-o")
+			else if(strcmp(argv[i], "-o") == 0)
 			{
 				++i;
+				std::cout << "OUTPUT: " << argv[i];
 				outfile = argv[i];
 			}
 		}
@@ -74,11 +82,35 @@ int main(int argc, char* argv[])
 
 		std::cout << "Before Copy" << std::endl;
 		struct stat stFileInfo;
-		if(stat(oc.outfile.c_str(),&stFileInfo))
+		bfs::path outpath(oc.outfile);
+		if(bfs::exists(outpath))
 		{
-			char cmdBuff[200];
-			sprintf(cmdBuff,"rename %s %s",oc.outfile,oc.outfile + ".backup");
-			system(cmdBuff);
+			bool filebackedup = false;
+			int count = 0;
+
+			while(filebackedup == false)
+			{
+				try
+				{
+					std::stringstream tack;
+
+					if(count != 0)
+					{
+						tack << "_" << count;
+					}
+					std::string outback = oc.outfile + ".bak" + tack.str();
+					bfs::path outbackpath(outback);
+					std::cout << "RENAMING : " << oc.outfile << " to " << outback << std::endl;
+					bfs::copy_file(outpath, outbackpath);
+					filebackedup = true;
+				}
+				catch(bfs::filesystem_error e)
+				{
+					count++;
+				}
+
+
+			}
 		}
 		std::cout << "HERE" << std::endl;
 		if(oc.cppfile != "" && oc.option == 'c')

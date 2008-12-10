@@ -13,6 +13,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <stdlib.h>
 #include <map>
 #include "token.h"
 #include "exceptions.h"

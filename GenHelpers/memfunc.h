@@ -48,6 +48,7 @@ public:
 	void setVirtual(bool v);
 
 	std::string toString();
+	std::string toCppString();
 
 	std::string& getString();
 

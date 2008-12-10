@@ -121,7 +121,26 @@ output_object resolver::finalize()
 		{
 
 			std::pair<std::string, std::string> p;
-			p.first = my_info.headers[i].first;
+			bool found = false;
+			for(int j = 0; j < header_classes->size(); ++j)
+			{
+
+				if(found)
+					break;
+				std::vector<memfunc> h_funcs = (*header_classes)[j].get_funcs();
+
+				for(int k = 0; k < h_funcs.size(); ++k)
+				{
+					if(h_funcs[k].toString() == my_info.headers[i].first)
+					{
+						std::cout << h_funcs[k].toString() << " : " << h_funcs[k].toCppString();
+						p.first = h_funcs[k].toCppString();
+						found = true;
+					}
+				}
+
+
+			}
 
 			if(my_info.headers[i].second == -1)
 				p.second = "\n{\n\n\n}\n";

@@ -10,26 +10,24 @@
 using ::myclass;
 
 
-myclass::myclass(){
+ myclass::myclass(){
 
 
 }
 
 void myclass::func1(){
 
-
+wrqwe
 }
 
-int myclass::func2(){
+double myclass::func2(){
 
-	skfaj;skdfa
-	asldkfja;sdj
-
+wqrqwerqwreq
 }
 
 double myclass::func3(double i){
-tewtsdasdfasdfasd
-asdfasdf
+
+qwerqweerqewqrqwerq
 }
 
 

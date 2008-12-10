@@ -43,7 +43,7 @@ all: LexTester
 LexTester: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L"/home/wmb001/workspace/CSC500/Lexical Analyzer/Debug" -L"/home/wmb001/workspace/CSC500/GenHelpers/Debug" -o"LexTester" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L"" -L"/home/wmb001/workspace/CSC500/GenHelpers/Debug" -o"LexTester" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

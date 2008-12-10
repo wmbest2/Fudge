@@ -113,6 +113,35 @@ std::string memfunc::toString() // returns the header string
 	return out;
 }
 
+std::string memfunc::toCppString() // returns the header string
+{
+	std::string out;
+	out += return_type.toString();
+	if(return_type.toString() != "")
+		out += " ";
+	if(owner)
+	{
+		out += owner->getQual();
+		out += "::";
+	}
+	out += name;
+	out += "(";
+
+	for(int i = 0; i < params.size(); ++i)
+	{
+		out += params[i].toString();
+		if(i != params.size() - 1)
+			out += ", ";
+	}
+
+	out += ")";
+
+	if(is_const)
+		out += " const";
+
+	return out;
+}
+
 std::string& memfunc::getString()
 {
 

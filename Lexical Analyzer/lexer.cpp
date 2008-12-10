@@ -70,7 +70,11 @@ int lexer::getSize()
 void lexer::initializeKeywords()
 {
 	std::ifstream keyword_list;
-	keyword_list.open("keywords.dat");
+	char* path = getenv("HOME");
+	std::string file = path;
+	file += "/.fudge/";
+	file += "keywords.dat";
+	keyword_list.open(file.c_str());
 
 	while(!keyword_list.eof())
 	{
@@ -85,7 +89,11 @@ void lexer::initializeKeywords()
 void lexer::initializeOperators()
 {
 	std::ifstream oper_list;
-	oper_list.open("operators.dat");
+	char* path = getenv("HOME");
+	std::string file = path;
+	file += "/.fudge/";
+	file += "operators.dat";
+	oper_list.open(file.c_str());
 
 	while(!oper_list.eof())
 	{
